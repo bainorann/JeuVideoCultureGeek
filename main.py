@@ -31,4 +31,17 @@ l = r"""
 r = Room("east", l)
 print(r)
 print(j)
-print(f"\033[48:2::FF:FF:FFm \033[49m")
+def a(string,r,g,b):
+    return f"\033[38:2::{r}:{g}:{b}m{string}\033[39m"
+
+
+clear = lambda: os.system('clear')
+clear()
+
+for i in range(100):
+    print(a(l,255,0,0))
+    time.sleep(1)
+    clear()
+    print(a(l,0,255,0))
+    time.sleep(1)
+    clear()
