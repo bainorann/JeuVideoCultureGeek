@@ -15,11 +15,17 @@ class Display:
     def clear(self):
         self.screen.fill(self.background_color)
 
-    def render_ascii(self, text, x=0, y=0):
+    def render_ascii(self, text, text_color, x=0, y=0):
         lines = text.strip().split('\n')
         for i, line in enumerate(lines):
-            surface = self.font.render(line, True, self.text_color)
+            surface = self.font.render(line, True, text_color)
             self.screen.blit(surface, (x, y + i * self.font.get_height()))
+
+    def render_char(self, char, text_color, grid_x, grid_y, offset_x=0, offset_y=0):
+        surface = self.font.render(char, True, text_color)
+        x = offset_x + grid_x #* self.font.get_width()
+        y = offset_y + grid_y #* self.font.get_height()
+        self.screen.blit(surface, (x, y))
 
     def update(self):
         pygame.display.flip()
