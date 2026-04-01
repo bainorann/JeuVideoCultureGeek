@@ -1,6 +1,9 @@
 import os
 import time
 
+from display import Display
+
+
 class Joueur:
     def __init__(self):
         self.hp = 10
@@ -10,16 +13,17 @@ class Joueur:
     def __str__(self):
         return f"health points : {self.hp} \nshield : {self.sh} \nstrength : {self.st}"
 
+
 class Room:
     def __init__(self, door_in, layout_in):
         self.door = door_in
-        self.layout =  layout_in
+        self.layout = layout_in
     def __str__(self):
         return self.layout
 
 
-
 j = Joueur()
+
 l = r"""
 ██████████████████████
 ██                  ██
@@ -28,20 +32,56 @@ l = r"""
 ██                  ██
 ██                  ██
 ██████████████████████"""
+
+room_open_east = r"""
+██████████████████████
+██                  ██
+██                  ██
+██                  
+██                  ██
+██                  ██
+██████████████████████"""
+
+room_open_north = r"""
+█████████    █████████
+██                  ██
+██                  ██
+██                  ██
+██                  ██
+██                  ██
+██████████████████████"""
+
+room_open_south = r"""
+██████████████████████
+██                  ██
+██                  ██
+██                  ██
+██                  ██
+██                  ██
+█████████    █████████"""
+
+room_open_west = r"""
+██████████████████████
+██                  ██
+██                  ██
+                    ██
+██                  ██
+██                  ██
+██████████████████████"""
+
 r = Room("east", l)
-print(r)
-print(j)
-def a(string,r,g,b):
-    return f"\033[38:2::{r}:{g}:{b}m{string}\033[39m"
 
 
-clear = lambda: os.system('clear')
-clear()
+def main():
+    display = Display(800, 600, "ASCII Game")
 
-for i in range(100):
-    print(a(l,255,0,0))
-    time.sleep(1)
-    clear()
-    print(a(l,0,255,0))
-    time.sleep(1)
-    clear()
+    while display.is_open():
+        display.clear()
+        display.render_ascii(l, 250, 200)
+        display.update()
+
+    display.close()
+
+
+if __name__ == "__main__":
+    main()
