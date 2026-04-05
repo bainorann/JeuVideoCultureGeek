@@ -1,16 +1,6 @@
-import time
-
 from display import Display
-
-
-
-class Room:
-    def __init__(self, door_in, layout_in):
-        self.door = door_in
-        self.layout = layout_in
-    def __str__(self):
-        return self.layout
-
+from map import Room
+import time
 
 class Player:
     def __init__(self, x=12, y=4):
@@ -74,7 +64,7 @@ room_open_west = r"""
 ██                  ██
 ██████████████████████"""
 
-r = Room("east", l)
+#r = Room("east", l)
 player = Player(50,50)
 
 
@@ -82,10 +72,12 @@ def main():
     display = Display(800, 600, "ASCII Game")
     offset_x = 250
     offset_y = 200
+#pixel size seems to be 8x8 for the squares
 
     while display.is_open():
         display.clear()
         display.render_ascii(room_open_east, (150, 150, 255), offset_x, offset_y)
+        display.render_ascii(room_open_west, (150, 255, 150), 8, offset_y + 10)
         display.render_char('@', (255, 255, 255), player.x, player.y, offset_x, offset_y)
         display.update()
 
