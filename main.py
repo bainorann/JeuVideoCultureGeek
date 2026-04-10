@@ -29,13 +29,14 @@ l = r"""
 ██████████████████████"""
 
 room_open_east = r"""
-██████████████████████
-██                  ██
-██                  ██
-██                  
-██                  ██
-██                  ██
-██████████████████████"""
+%%%%%%%%%%%%%%%%
+%%            %%
+%%            %%
+%%            %%
+%%              
+%%            %%
+%%            %%
+%%%%%%%%%%%%%%%%"""
 
 room_open_north = r"""
 █████████    █████████
@@ -73,11 +74,12 @@ def main():
     offset_x = 250
     offset_y = 200
 #pixel size seems to be 8x8 for the squares
-
+    #or 10x10 ? not sure ...
+#for simplicity's sake let's define the room tiles
     while display.is_open():
         display.clear()
         display.render_ascii(room_open_east, (150, 150, 255), offset_x, offset_y)
-        display.render_ascii(room_open_west, (150, 255, 150), 8, offset_y + 10)
+        display.render_ascii(room_open_west, (150, 255, 150), 0, offset_y)
         display.render_char('@', (255, 255, 255), player.x, player.y, offset_x, offset_y)
         display.update()
 
