@@ -1,5 +1,7 @@
 from display import Display
 from map import Room
+from map import Floor
+from map import show_floor
 import time
 
 class Player:
@@ -66,10 +68,9 @@ room_open_west = r"""
 ██████████████████████"""
 
 #r = Room("east", l)
-player = Player(50,50)
 
 
-def main():
+def test1():
     display = Display(800, 600, "ASCII Game")
     offset_x = 250
     offset_y = 200
@@ -85,7 +86,19 @@ def main():
 
     display.close()
 
+def test2():
+    display = Display(800, 600, "yippee")
+    room1 = Room(0, 1, room_open_east, 1, 0, (150, 150, 255))
+    room2 = Room(0, 1, room_open_east, 1, 1, (150, 255, 150))
+    floor1 = Floor(2)
+    print(floor1)
+    floor1.add_room(0, 0, room1)
+    floor1.add_room(0, 1, room2)
+    print(floor1)
+    while display.is_open():
+        show_floor(floor1, display)
+        display.update()
 
 if __name__ == "__main__":
-    print(player)
-    main()
+    #test1()
+    test2()
