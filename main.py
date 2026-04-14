@@ -3,22 +3,7 @@ from map import Room
 from map import Floor
 from map import show_floor
 import time
-
-class Player:
-    def __init__(self, x=12, y=4):
-        self.hp = 10
-        self.sh = 10
-        self.st = 10
-        self.x = x
-        self.y = y
-
-    def move(self, dx, dy):
-        self.x += dx
-        self.y += dy
-
-    def __str__(self):
-        return f"health points : {self.hp} \nshield : {self.sh} \nstrength : {self.st} \nx : {self.x} \ny : {self.y}"
-
+from player import Player
 
 
 l = r"""
