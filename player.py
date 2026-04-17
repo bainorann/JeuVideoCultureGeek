@@ -17,7 +17,6 @@ class Player:
             #otherwise the character should not move
     
     def __str__(self):
-        return f"hp : {self._hp} | sh : {self._sh} | st : {self._st}\n
-        x : {self._x} | y : {self._y} | localx : {self._localx} | localy : {self._localy}"
+        return f"hp : {self._hp} | sh : {self._sh} | st : {self._st}\nx : {self._x} | y : {self._y} | localx : {self._localx} | localy : {self._localy}"
 
         

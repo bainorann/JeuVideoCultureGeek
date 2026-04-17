@@ -1,6 +1,6 @@
 from display import Display
 
-const_char_offset = 12 #for now, until we know better...
+const_char_offset = 11 #see test3 in main.py
 const_room_offset = const_char_offset*15
 
 class Room:

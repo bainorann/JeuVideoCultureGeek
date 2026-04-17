@@ -5,7 +5,10 @@ import sys
 class Display:
     def __init__(self, width=800, height=600, title="ASCII Game"):
         pygame.init()
-        self.screen = pygame.display.set_mode((width, height))
+        info = pygame.display.Info()
+        screen_width = info.current_w
+        screen_height = info.current_h
+        self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
         pygame.display.set_caption(title)
         self.clock = pygame.time.Clock()
         self.font = pygame.font.SysFont("monospace", 18)

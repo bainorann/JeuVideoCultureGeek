@@ -4,6 +4,8 @@ from map import Floor
 from map import show_floor
 import time
 from player import Player
+import pygame
+import sys
 
 
 l = r"""
@@ -84,6 +86,12 @@ def test2():
         show_floor(floor1, display)
         display.update()
 
+def test3():
+    pygame.init()
+    font = pygame.font.SysFont("monospace", 29)
+    print(font.size("%"))
+
 if __name__ == "__main__":
     #test1()
-    test2()
+    #test2()
+    test3()
