@@ -29,6 +29,28 @@ l_run = r"""
 ██      RUN     ██
 ██████████████████"""
 
+monster = r"""
+             |
+             |
+             |
+             |
+             |
+             |
+             |
+             |
+             |
+        \/   |    \/  
+        ||   |    ||
+        ------------
+       <  [•]  [•]   >
+}======<  [•]  [•]   >======{
+       <  [•]  [•]   >
+}======<  [•]  [•]   >======{
+       <     ww      >
+        ------------
+          ||   ||
+          /\   /\ """
+
 
 def combat(display, player1, enemy1, bag):
 
@@ -99,6 +121,8 @@ def combat(display, player1, enemy1, bag):
                 col = (0,0,255) if i == selection_index else (255,255,255)
                 display.render_ascii(str(button), col, 50 + i*250, 500)
 
+            display.render_ascii(monster, (255,255,255), 250, -20)
+
         elif state == "anim_player":
 
             pygame.time.delay(500)
@@ -145,6 +169,20 @@ def combat(display, player1, enemy1, bag):
 
                     elif keys[pygame.K_RIGHT]:
                         item_index = (item_index + 1) % len(usable_items)
+                        last_move_time = current_time
+                    
+                    if keys[pygame.K_DOWN]:
+                        if (item_index + 4) < len(usable_items):
+                            item_index = (item_index + 4)
+                        else :
+                            item_index = len(usable_items) - 1
+                        last_move_time = current_time
+
+                    elif keys[pygame.K_UP]:
+                        if (item_index - 4) >= 0 :
+                            item_index = (item_index - 4)
+                        else:
+                            item_index = 0
                         last_move_time = current_time
 
                     elif space_now and not space_last:
