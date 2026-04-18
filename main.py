@@ -6,7 +6,7 @@ import time
 from player import Player
 import pygame
 import sys
-
+from screen import choose_font
 
 l = r"""
 ██████████████████████
@@ -94,4 +94,5 @@ def test3():
 if __name__ == "__main__":
     #test1()
     #test2()
-    test3()
+    #test3()
+    print(choose_font())
