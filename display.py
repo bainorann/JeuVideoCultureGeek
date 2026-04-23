@@ -43,3 +43,7 @@ class Display:
     def close(self):
         pygame.quit()
         sys.exit()
+
+def print_mat(m):
+    for i in m:
+        print(i)

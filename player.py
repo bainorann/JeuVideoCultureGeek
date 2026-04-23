@@ -1,3 +1,6 @@
+from map import Floor
+from map import Room
+
 class Player:
     def __init__(self, x=0, y=0):
         self._hp = 10
@@ -18,5 +21,28 @@ class Player:
     
     def __str__(self):
         return f"hp : {self._hp} | sh : {self._sh} | st : {self._st}\nx : {self._x} | y : {self._y} | localx : {self._localx} | localy : {self._localy}"
+    
+    def x(self):
+        return self._x  
 
-        
+    def y(self):
+        return self._y
+
+    def localx(self):
+        return self._localx
+
+    def localy(self):
+        return self._localy
+
+
+def check_wall(player, floor, dx, dy):
+    room_id = floor.mat()[player.x()][player.y()]
+    curr_room = floor.tab()[room_id]
+    if 0<localx<16 and 1<localy<7: #the player is within the interior of the room
+        return curr_room.mat()[localx+dx][localy+dy]==0
+    else: #the player is on a room border, just check door collision
+        if localx == 0 and dy != 0: #necessarily west door, check up and down
+            return curr_room.mat()[localx][localy+dy]==0
+        if localx == 15 #the rest...
+
+

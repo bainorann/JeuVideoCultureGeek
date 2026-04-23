@@ -91,8 +91,12 @@ def test3():
     font = pygame.font.SysFont("monospace", 29)
     print(font.size("%"))
 
+def test4():
+    r = Room(3, 2, room_open_east, 1, 0,(150, 150, 255))
+
 if __name__ == "__main__":
     #test1()
     #test2()
     #test3()
-    print(choose_font())
+    test4()
+    #print(choose_font())

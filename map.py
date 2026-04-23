@@ -1,5 +1,5 @@
 from display import Display
-
+from display import print_mat
 const_char_offset = 11 #see test3 in main.py
 const_room_offset = const_char_offset*15
 
@@ -11,6 +11,30 @@ class Room:
         self._size = size #always consider a room starts at the top right
         self._id = id
         self._colour = colour
+        self._mat = [[0 for i in range(16*size)]for i in range(8*size)]
+        for i in range(8):
+            for j in [0, 1, 16*size-2, 16*size-1]:
+                self._mat[i][j] = 1
+        for i in [0, 8*size-1]:
+            for j in range(16*size):
+                self._mat[i][j] = 1
+
+        if door_in == 0 or door_out == 0: #north facing door
+            self._mat[0][7] = 0
+            self._mat[0][8] = 0
+        if door_in == 3 or door_out == 1: #east facing door
+            self._mat[3][0] = 0
+            self._mat[4][0] = 0
+            self._mat[3][1] = 0
+            self._mat[4][1] = 0
+        if door_in == 2 or door_out == 2: #south facing door
+            self._mat[7][7] = 0
+            self._mat[7][8] = 0
+        if door_in == 1 or door_out == 3: #west facing door
+            self._mat[3][14] = 0
+            self._mat[4][14] = 0
+            self._mat[3][15] = 0
+            self._mat[4][15] = 0
 
     def __str__(self):
         return self._layout
@@ -26,6 +50,9 @@ class Room:
 
     def colour(self):
         return self._colour #a 3 long list containing rgb values for the room colour
+    
+    def mat(self):
+        return self._mat
 
 class Floor:
     def __init__(self, size):
