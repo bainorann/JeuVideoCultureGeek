@@ -1,4 +1,3 @@
-from display import Display 
 import pygame
 import sys
 
@@ -7,14 +6,13 @@ def get_screen_info():
     pygame.init()
     info = pygame.display.Info()
     screen_width = info.current_w
-    screen_height = info.current_w
-    pygame.quit()
+    screen_height = info.current_h
+#    pygame.quit()
     return (screen_width, screen_height)
 
 def choose_font():
-    #screen_w, screen_h = get_screen_info()
-    screen_w, screen_h = (8024, 1964)
-    pygame.init()
+    screen_w, screen_h = get_screen_info()
+#    pygame.init()
     i = 1
     font_w, font_h = (pygame.font.SysFont("monospace", i)).size("%")
     

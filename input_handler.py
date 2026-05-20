@@ -1,0 +1,19 @@
+import pygame
+
+
+def handle_input(player, floor):
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            return False
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
+                return False
+            if event.key == pygame.K_RIGHT:
+                player.move(1, 0, floor)
+            elif event.key == pygame.K_LEFT:
+                player.move(-1, 0, floor)
+            elif event.key == pygame.K_DOWN:
+                player.move(0, 1, floor)
+            elif event.key == pygame.K_UP:
+                player.move(0, -1, floor)
+    return True

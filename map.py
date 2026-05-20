@@ -55,15 +55,16 @@ class Room:
         return self._mat
 
 class Floor:
-    def __init__(self, size):
-        self._mat = [[-1 for i in range(size)] for i in range(size)]
-        self._size = size
-        self._tab = [Room(0, 0, '', 0, -1, (0,0,0)) for i in range(size*size)] #a list containing the rooms (Room class), for which the index is the id of the room
+    def __init__(self):
+        self._mat = [[-1 for i in range(10)] for i in range(6)]
+        self._size = (10, 6)
+        self._tab = [Room(0, 0, '', 1, -1, (0,0,0)) for i in range(60)] #a list containing the rooms (Room class), for which the index is the id of the room
     
     def __str__(self):
         string = ""
-        for i in range(self._size):
-            for j in range(self._size):
+        cols, rows = self._size
+        for i in range(rows):
+            for j in range(cols):
                 string =  string + str(self._mat[i][j])
             string = string + "\n"
         return string
@@ -89,13 +90,11 @@ class Floor:
 #the objective of this function is to print an entire floor
 def show_floor(f, display):
     display.clear()
-    for i in range(f.size()):
-        for j in range(f.size()):
+    cols, rows = f.size()
+    for i in range(rows):
+        for j in range(cols):
             curr_room = f.tab()[f.mat()[i][j]]
             if curr_room.id() != -1:
-        #we know for a fact here (see readme) that rooms are separated in 16x8 tiles.
-        #the only thing left to do is to print the entire matrix from topleft to bootom right
-        #while adding a 16 char offset (16*10 or 8 pixels, not sure yet...)
-                display.render_ascii(curr_room.layout(), tuple(curr_room.colour()), j*const_room_offset, i*const_room_offset)
+                display.render_ascii(curr_room.layout(), tuple(curr_room.colour()), j * display._fontw * 15, i * display._fonth * 7)
             
 
