@@ -1,4 +1,5 @@
 from display import Display
+from display import print_mat
 from map import Room
 from map import Floor
 from map import show_floor
@@ -18,42 +19,45 @@ l = r"""
 ██                  ██
 ██████████████████████"""
 
-room_open_east = r"""
+room_open_1 = r"""
 %%%%%%%%%%%%%%%%
 %%            %%
 %%            %%
-%%            %%
+%%            
 %%              
+%%            %%
+%%            %%
+%%%%%%%  %%%%%%%"""
+
+room_open_2 = r"""
+%%%%%%%%%%%%%%%%
+%%            %%
+%%            %%
+              %%            
+              %%
+%%            %%
+%%            %%
+%%%%%%%  %%%%%%%"""
+
+room_open_3 = r"""
+%%%%%%%  %%%%%%%
+%%            %%
+%%            %%
+%%                        
+%%            
 %%            %%
 %%            %%
 %%%%%%%%%%%%%%%%"""
 
-room_open_north = r"""
-█████████    █████████
-██                  ██
-██                  ██
-██                  ██
-██                  ██
-██                  ██
-██████████████████████"""
-
-room_open_south = r"""
-██████████████████████
-██                  ██
-██                  ██
-██                  ██
-██                  ██
-██                  ██
-█████████    █████████"""
-
-room_open_west = r"""
-██████████████████████
-██                  ██
-██                  ██
-                    ██
-██                  ██
-██                  ██
-██████████████████████"""
+room_open_4 = r"""
+%%%%%%%  %%%%%%%
+%%            %%
+%%            %%
+              %%          
+              %%
+%%            %%
+%%            %%
+%%%%%%%%%%%%%%%%"""
 
 #r = Room("east", l)
 
@@ -107,10 +111,13 @@ def test5():
     display = Display()
     floor = Floor()
     room_id = 0
-    for j in range(6):
-        for i in range(10):
+    for y in range(6):
+        for x in range(10):
             room = Room(0, 1, room_open_east, 1, room_id, (150, 150, 255))
-            floor.add_room(j, i, room)
+            print_mat(room.mat())
+            print(" ")
+            print(" ")
+            floor.add_room(x, y, room)
             room_id += 1
     running = True
     while running:
@@ -121,10 +128,82 @@ def test5():
         display.update()
     display.close()
 
+def test6():
+    player = Player()
+    display = Display()
+    floor = Floor()
+    room0 = Room(1, 2, room_open_1, 1, 0, (150, 150, 255))
+    print_mat(room0.mat())
+    print(" ")
+    print(" ")
+    floor.add_room(0, 0, room0)
+    room1 = Room(2, 3, room_open_2, 1, 1, (150, 150, 255))
+    print_mat(room1.mat())
+    print(" ")
+    print(" ")
+    floor.add_room(1, 0, room1)
+    room2 = Room(0, 1, room_open_3, 1, 2, (150, 150, 255))
+    print_mat(room2.mat())
+    print(" ")
+    print(" ")
+    floor.add_room(0, 1, room2)
+    room3 = Room(0, 3, room_open_4, 1, 3, (150, 150, 255))
+    print_mat(room3.mat())
+    print(" ")
+    print(" ")
+    floor.add_room(1, 1, room3)
+    running = True
+    while running:
+        running = handle_input(player, floor)
+        show_floor(floor, display)
+        #print(f"localx : {player.localx()}, localy : {player.localy()}")
+        display.render_char('@', (255, 255, 255), player.localx(), player.localy(), player.x(), player.y())
+        display.update()
+    display.close()
+
+def test7():
+    player = Player()
+    display = Display()
+    floor = Floor()
+    room0 = Room(3, 2, room_open_east, 1, 0, (150, 150, 255))
+    print_mat(room0.mat())
+    floor.add_room(0, 0, room0)
+    running = True
+    while running:
+        running = handle_input(player, floor)
+        show_floor(floor, display)
+        print(f"localx : {player.localx()}, localy : {player.localy()}")
+        display.render_char('@', (255, 255, 255), player.localx(), player.localy(), player.x(), player.y())
+        display.update()
+    display.close()
+
+def test8():
+    player = Player()
+    display = Display()
+    floor = Floor()
+    room0 = Room(1, 2, room_open_1, 1, 0, (150, 150, 255))
+    floor.add_room(0, 0, room0)
+    room1 = Room(2, 3, room_open_2, 1, 1, (150, 150, 255))
+    floor.add_room(1, 0, room1)
+    room2 = Room(0, 1, room_open_3, 1, 2, (150, 150, 255))
+    floor.add_room(0, 1, room2)
+    room3 = Room(0, 3, room_open_4, 1, 3, (150, 150, 255))
+    floor.add_room(1, 1, room3)
+    running = True
+    while running:
+        running = handle_input(player, floor)
+        show_floor(floor, display)
+        display.render_char('@', (255, 255, 255), player.localx(), player.localy(), player.x(), player.y())
+        display.update()
+    display.close()
+
 if __name__ == "__main__":
     #test1()
     #test2()
     #test3()
     #test4()
-    test5()
+    #test5()
+    #test6()
+    #test7()
+    test8()
     #print(choose_font())

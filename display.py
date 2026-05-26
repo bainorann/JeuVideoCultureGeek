@@ -28,7 +28,7 @@ class Display:
 
     def render_char(self, char, text_color, grid_x, grid_y, offset_x=0, offset_y=0):
         surface = self.font.render(char, True, text_color)
-        x = (offset_x*16 + grid_x)* self._fontw
+        x = (offset_x*16 + grid_x)* (self._fontw-1)
         y = (offset_y*8 + grid_y)* self._fonth
         self.screen.blit(surface, (x, y))
 
@@ -47,5 +47,8 @@ class Display:
         sys.exit()
 
 def print_mat(m):
-    for i in m:
-        print(i)
+    for y in range(len(m[0])):
+        line = ""
+        for x in range(len(m)):
+            line += str(m[x][y])
+        print(line)

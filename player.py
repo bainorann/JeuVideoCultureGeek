@@ -18,32 +18,33 @@ class Player:
         #if self._localx>=14 or self._localx<=2 or self._localy>=7 or self._localy<=1:
         match check_wall(self, floor, dx, dy):
             case 0 | 1 | 2 | 3:
-                print("got to case 1")
+                #print("got to case 1")
                 self._localx += dx
                 self._localy += dy
                 #self._x unchanged, we are still in the same room
             case 4:
-                print("got to case 2")
+                #print("got to case 2")
                 self._localx = 0
                 #self._localy unchanged, we only moved to the right
                 self._x += 1
             case 5:
-                print("got to case 3")
+                #print("got to case 3")
                 self._localx = 15
                 self._x += -1
             case 6:
-                print("got to case 4")
+                #print("got to case 4")
                 self._localy = 0
                 self._y += 1
             case 7:
-                print("got to case 5")
+                #print("got to case 5")
                 self._localy = 7
                 self._y += -1
-            case 8:
-                print("Floor change: DOWN")
-            case 9:
-                print("Floor change: UP")
-        print("wtf²")
+            case 8:()
+                #print("Floor change: DOWN")
+            case 9:()
+                #print("Floor change: UP")
+            case _:()
+                #print(f"wtf² : {self.localx()},{self.localy()} | {self.x()},{self.y()}")
         #otherwise the character should not move
     
     def __str__(self):
@@ -71,34 +72,28 @@ def check_wall(player, floor, dx, dy):
     if 0<player.localx()<15 and 0<player.localy()<7: 
         if curr_room.mat()[player.localx()+dx][player.localy()+dy]==0:
             return 0
-        else:
-            (curr_room.mat()[player.localx()+dx][player.localy()+dy]) = 51
-            print_mat(curr_room.mat())
-            print(player.localx()+dx)
-            print(player.localy()+dy)
 
     else: #the player is on a room border, just check door collision
 
         #necessarily west door, check up and down
         #otherwise out of bounds index...
-        if player.localx() == 0 and dy != 0: 
-            if curr_room.mat()[player.localx()][player.localy()+dy]==0:
+        if player.localx() == 0 and (dy != 0 or dx>=0): 
+            if curr_room.mat()[player.localx()+dx][player.localy()+dy]==0:
                 return 1
 
         #necessarily east door, check up and down
-        if player.localx() == 15 and dy != 0:
-            if curr_room.mat()[player.localx()][player.localy()+dy]==0:
+        if player.localx() == 15 and (dy != 0 or dx<=0):
+            if curr_room.mat()[player.localx()+dx][player.localy()+dy]==0:
                 return 2
 
         #necessarily north or south
-        if (player.localy() == 0 or player.localy() == 7) and dx != 0:
-            if curr_room.mat()[player.localx()+dx][player.localy()]==0:
+        if (player.localy() == 0 and (dx != 0 or dy>=0)) or (player.localy() == 7 and (dx != 0 or dy<=0)):
+            if curr_room.mat()[player.localx()+dx][player.localy()+dy]==0:
                 return 3
     
         #changing rooms
         else:
             if player.localx() == 15 and dx>=0:
-
                 #check to see if we are at the edge of a floor
                 if player.x() < 9:
                     next_room_id = floor.mat()[player.x()+1][player.y()]

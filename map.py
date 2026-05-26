@@ -11,30 +11,30 @@ class Room:
         self._size = size #always consider a room starts at the top right
         self._id = id
         self._colour = colour
-        self._mat = [[0 for i in range(16*size)]for i in range(8*size)]
-        for i in range(8):
-            for j in [0, 1, 16*size-2, 16*size-1]:
+        self._mat = [[0 for i in range(8*size)]for i in range(16*size)]
+        for j in range(8):
+            for i in [0, 1, 16*size-2, 16*size-1]:
                 self._mat[i][j] = 1
-        for i in [0, 8*size-1]:
-            for j in range(16*size):
+        for j in [0, 8*size-1]:
+            for i in range(16*size):
                 self._mat[i][j] = 1
 
         if door_in == 0 or door_out == 0: #north facing door
-            self._mat[0][7] = 0
-            self._mat[0][8] = 0
-        if door_in == 3 or door_out == 1: #east facing door
-            self._mat[3][0] = 0
-            self._mat[4][0] = 0
-            self._mat[3][1] = 0
-            self._mat[4][1] = 0
+            self._mat[7][0] = 0
+            self._mat[8][0] = 0
+        if door_in == 1 or door_out == 1: #east facing door
+            self._mat[14][3] = 0
+            self._mat[15][4] = 0
+            self._mat[15][3] = 0
+            self._mat[14][4] = 0
         if door_in == 2 or door_out == 2: #south facing door
             self._mat[7][7] = 0
-            self._mat[7][8] = 0
-        if door_in == 1 or door_out == 3: #west facing door
-            self._mat[3][14] = 0
-            self._mat[4][14] = 0
-            self._mat[3][15] = 0
-            self._mat[4][15] = 0
+            self._mat[8][7] = 0
+        if door_in == 3 or door_out == 3: #west facing door
+            self._mat[0][3] = 0
+            self._mat[1][4] = 0
+            self._mat[1][3] = 0
+            self._mat[0][4] = 0
 
     def __str__(self):
         return self._layout
@@ -56,7 +56,7 @@ class Room:
 
 class Floor:
     def __init__(self):
-        self._mat = [[-1 for i in range(10)] for i in range(6)]
+        self._mat = [[-1 for i in range(6)] for i in range(10)]
         self._size = (10, 6)
         self._tab = [Room(0, 0, '', 1, -1, (0,0,0)) for i in range(60)] #a list containing the rooms (Room class), for which the index is the id of the room
     
@@ -65,7 +65,7 @@ class Floor:
         cols, rows = self._size
         for i in range(rows):
             for j in range(cols):
-                string =  string + str(self._mat[i][j])
+                string =  string + str(self._mat[j][i])
             string = string + "\n"
         return string
    
@@ -93,8 +93,8 @@ def show_floor(f, display):
     cols, rows = f.size()
     for i in range(rows):
         for j in range(cols):
-            curr_room = f.tab()[f.mat()[i][j]]
+            curr_room = f.tab()[f.mat()[j][i]]
             if curr_room.id() != -1:
-                display.render_ascii(curr_room.layout(), tuple(curr_room.colour()), j * display._fontw * 15, i * display._fonth * 7)
+                display.render_ascii(curr_room.layout(), tuple(curr_room.colour()), j * display._fontw * 15, i * display._fonth * 8)
             
 
