@@ -1,0 +1,9 @@
+the room matrices is not defined for mat[x][y] but for [y][x] which triggers me a bit, maybe try to change the way it's defined in player.py, otherwise you need to invert all other calls to it...
+
+^ done to some extent, the movement works partially now
+^ k should be good now
+
+
+next, need to change "door in"/"door out" variables to be a door list (with a max size of 4 maybe) to allow for multiple entries and exits...
+
+next, fix print_mat function -> seems to do some random bullshit...., need to be sure that door placements are good, but can't with this shit function...
