@@ -3,6 +3,8 @@ from display import print_mat
 from map import Room
 from map import Floor
 from map import show_floor
+from map import Floor
+from map import show_floor
 import time
 from player import Player
 import pygame
