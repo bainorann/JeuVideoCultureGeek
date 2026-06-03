@@ -71,17 +71,17 @@ def test1():
 #for simplicity's sake let's define the room tiles
     while display.is_open():
         display.clear()
-        display.render_ascii(room_open_east, (150, 150, 255), offset_x, offset_y)
-        display.render_ascii(room_open_west, (150, 255, 150), 0, offset_y)
-        display.render_char('@', (255, 255, 255), player.x, player.y, offset_x, offset_y)
+        display.render_ascii(room_open_1, (150, 150, 255), offset_x, offset_y)
+        display.render_ascii(room_open_2, (150, 255, 150), 0, offset_y)
+        #display.render_char('@', (255, 255, 255), player.x, player.y, offset_x, offset_y)
         display.update()
 
     display.close()
 
 def test2():
     display = Display(800, 600, "yippee")
-    room1 = Room(0, 1, room_open_east, 1, 0, (150, 150, 255))
-    room2 = Room(0, 1, room_open_east, 1, 1, (150, 255, 150))
+    room1 = Room(0, 1, room_open_1, 1, 0, (150, 150, 255))
+    room2 = Room(0, 1, room_open_1, 1, 1, (150, 255, 150))
     floor1 = Floor()
     player = Player()
     print(floor1)
@@ -104,7 +104,7 @@ def test3():
     print(font.size("%"))
 
 def test4():
-    r = Room(3, 2, room_open_east, 1, 0,(150, 150, 255))
+    r = Room(3, 2, room_open_1, 1, 0,(150, 150, 255))
 
 def test5():
     player = Player()
@@ -113,7 +113,7 @@ def test5():
     room_id = 0
     for y in range(6):
         for x in range(10):
-            room = Room(0, 1, room_open_east, 1, room_id, (150, 150, 255))
+            room = Room(0, 1, room_open_1, 1, room_id, (150, 150, 255))
             print_mat(room.mat())
             print(" ")
             print(" ")
@@ -165,7 +165,7 @@ def test7():
     player = Player()
     display = Display()
     floor = Floor()
-    room0 = Room(3, 2, room_open_east, 1, 0, (150, 150, 255))
+    room0 = Room(3, 2, room_open_1, 1, 0, (150, 150, 255))
     print_mat(room0.mat())
     floor.add_room(0, 0, room0)
     running = True
