@@ -1,5 +1,7 @@
-import pygame
 import sys
+
+import pygame
+
 from screen import choose_font
 
 
@@ -21,15 +23,15 @@ class Display:
         self.screen.fill(self.background_color)
 
     def render_ascii(self, text, text_color, x=0, y=0):
-        lines = text.strip().split('\n')
+        lines = text.strip().split("\n")
         for i, line in enumerate(lines):
             surface = self.font.render(line, True, text_color)
             self.screen.blit(surface, (x, y + i * self._fonth))
 
     def render_char(self, char, text_color, grid_x, grid_y, offset_x=0, offset_y=0):
         surface = self.font.render(char, True, text_color)
-        x = (offset_x*16 + grid_x)* (self._fontw-1)
-        y = (offset_y*8 + grid_y)* self._fonth
+        x = (offset_x * 16 + grid_x) * (self._fontw - 1)
+        y = (offset_y * 8 + grid_y) * self._fonth
         self.screen.blit(surface, (x, y))
 
     def update(self):
@@ -45,6 +47,7 @@ class Display:
     def close(self):
         pygame.quit()
         sys.exit()
+
 
 def print_mat(m):
     for y in range(len(m[0])):
