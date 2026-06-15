@@ -1,12 +1,18 @@
 import tests.layouts as layouts
 import tests.layouts_2 as layouts2
 from input_handler import handle_input
+from lasminas import casino_game
 from map import Floor, Room, show_floor
 from player import Player
 from tests.helpers import make_display
 
 
 def run():
+    player = Player(1, 1)
+    return run_hub(True, player)
+
+
+def run_hub(running, player):
     display = make_display("Second Floor Layout")
     floor = Floor()
 
@@ -21,11 +27,8 @@ def run():
         for y in range(4):
             floor.visit_room(x, y)
 
-    player = Player(1, 1)
-
-    running = True
     while running:
-        break
+        print(player.x(), player.y())
         running = handle_input(player, floor)
         floor.visit_room(player.x(), player.y())
         show_floor(floor, display)
@@ -44,7 +47,27 @@ def run():
             and player.localy() <= 5
             and player.localy() >= 3
         ):
-            break
+            run_dungeon(display, running)
+
+        if (
+            (player.x(), player.y()) == (1, 1)
+            and player.localy() == 3
+            and player.localx() <= 7
+            and player.localx() >= 6
+        ):
+            print("CACAAAAA ATTENTION CACAAAA")
+            run_casino(display, running, player)
+
+
+def run_casino(display, running, player):
+    if running:
+        a = casino_game(display, player.debt(), player.money(), "balanced")
+        player.min_debt(a)
+        player.min_money(a)
+        player.set_position(1, 1, 6, 4)
+
+
+def run_dungeon(display, running):
     floor = Floor()
 
     room_coords = [

@@ -7,6 +7,8 @@ class Player:
         self._hp = 10
         self._sh = 10
         self._st = 10
+        self._debt = 1000000000
+        self._money = 20
         # used to tell which room we're in
         self._x = x  # between 0 and 9 bc 10 rooms
         self._y = y  # between 0 and 5 bc 6 rooms
@@ -64,6 +66,24 @@ class Player:
 
     def localy(self):
         return self._localy
+
+    def debt(self):
+        return self._debt
+
+    def min_debt(self, num):
+        self._debt = self._debt - num
+
+    def money(self):
+        return self._money
+
+    def min_money(self, num):
+        self._money = self._money - num
+
+    def set_position(self, room_x, room_y, local_x, local_y):
+        self._x = room_x
+        self._y = room_y
+        self._localx = local_x
+        self._localy = local_y
 
 
 # précond : appelé avec UNIQUEMENT dx >=0 OU dy>=0

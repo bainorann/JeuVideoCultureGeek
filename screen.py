@@ -14,22 +14,18 @@ def get_screen_info():
 
 def choose_font():
     screen_w, screen_h = get_screen_info()
-    #    pygame.init()
-    i = 1
+    font_path = "assets/fonts/DejaVuSansMono.ttf"
     Font = pygame.font.Font
-    args = ("assets/fonts/DejaVuSansMono.ttf", i)
-    font_w, font_h = Font(*args).size("%")
+    i = 1
 
-    # not widescreen
     if screen_w / screen_h <= 16 / 9:
+        font_w = Font(font_path, i).size("          ")[0] // 10
         while font_w < int(screen_w / 160):
-            print(i, screen_w)
             i += 1
-            font_w, font_h = (pygame.font.SysFont("monospace", i)).size("%")
-
-    # widescreen
+            font_w = Font(font_path, i).size("          ")[0] // 10
     else:
+        _, font_h = Font(font_path, i).size("A")
         while font_h < int(screen_h / 48):
             i += 1
-            font_w, font_h = (pygame.font.SysFont("monospace", i)).size("%")
+            _, font_h = Font(font_path, i).size("A")
     return i

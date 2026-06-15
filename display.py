@@ -17,7 +17,8 @@ class Display:
         self.font = pygame.font.Font("assets/fonts/DejaVuSansMono.ttf", choose_font())
         self.background_color = (0, 0, 0)
         self.text_color = (255, 255, 255)
-        self._fontw, self._fonth = (self.font).size("%")
+        self._fontw = self.font.size("          ")[0] // 10
+        self._fonth = self.font.size("A")[1]
 
     def clear(self):
         self.screen.fill(self.background_color)
