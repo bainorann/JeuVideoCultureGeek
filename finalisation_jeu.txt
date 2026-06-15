@@ -1,0 +1,14 @@
+Finalisation du rendu :
+
+Classe player : ajouter les paramètres p.money (argent sur soi), p.bank (argent à la banque), p.debt (argent à payer au casino) et p.bag (contient les items du joueurs)
+Ouverture du jeu : écran titre -> à implémenter (v1 simple)
+Première scène : lancement casino en mode "unfair" (script existant)
+Argent tombe à zéro (le script se termine) : cinématique avec dialogue.py -> sprite à utiliser = merchant ; texte : "Dehors, vaurien ! Ne remets pas les pieds ici avant d'avoir retrouvé de l'argent... pour payer tes dettes !"
+Arrivée dans le hub : casino, banque, magasin, maison -> implémenter les collisions et relier les portes aux scripts des différents lieux ; se rendre à droite permet d'entrer dans le donjon
+Donjon : à la fin de chaque combat -> augmenter p.money
+Retour au hub : quand le joueur retourne au hub avec de l'argent (choix effectué après les passages clés), il peut acheter des items, placer son argent à la banque ou le parier
+Casino : mode "balanced", soit le joueur perd tout, soit il s'arrête avant mais ne récupère pas son argent, à la place sa dette p.debt est diminuée
+Milieu du donjon : souvenir joyeux du casino (mode "fair", aller de $20 à $10.000)
+-> découle sur un dialogue interne type "Je me rappelle ce jour-là, j'avais gagné tant d'argent, j'étais si euphorique."
+Fin du donjon : boss fight + casino "unfair"
+-> découle sur un dialogue interne type "Cette fois c'était trop, j'avais perdu trop gros. Elle ne me l'a pas pardonné, elle est partie..."
