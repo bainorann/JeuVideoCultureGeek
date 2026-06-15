@@ -107,7 +107,7 @@ def bank(display, player):
 
         current_time = time.time()
         keys         = pygame.key.get_pressed()
-        space_now    = keys[pygame.K_SPACE]
+        space_now    = keys[pygame.K_RETURN]
 
         # ── Fond : art ASCII centré ──────────────────────────────────
         art_x = _cx(screen, "       ______________________________", 8)
@@ -137,7 +137,7 @@ def bank(display, player):
                          (panel_x + 16, sep_y2), (panel_x + panel_w - 16, sep_y2), 1)
 
         # ── Hint navigation (toujours visible) ───────────────────────
-        hint = "<- -> naviguer    ESPACE valider    ECHAP retour"
+        hint = "<- -> naviguer    ENTREE valider    BACKSPACE retour"
         display.render_ascii(hint, C_GREY, _cx(screen, hint), panel_y + panel_h - 50)
 
         # ════════════════════════════════════════════════════════════
@@ -217,7 +217,7 @@ def bank(display, player):
                 elif keys[pygame.K_RIGHT]:
                     sel = (sel + 1) % (len(AMOUNTS) + 1)
                     last_move_time = current_time
-                elif keys[pygame.K_ESCAPE]:
+                elif keys[pygame.K_BACKSPACE]:
                     state = "main"
                     sel   = 0
 
@@ -265,7 +265,7 @@ def bank(display, player):
                 elif keys[pygame.K_RIGHT]:
                     sel = (sel + 1) % (len(AMOUNTS) + 1)
                     last_move_time = current_time
-                elif keys[pygame.K_ESCAPE]:
+                elif keys[pygame.K_BACKSPACE]:
                     state = "main"
                     sel   = 0
 
@@ -278,7 +278,7 @@ def bank(display, player):
                     player.bank  -= real_amt
                     player.money += real_amt
 
-        if keys[pygame.K_q]:
+        if keys[pygame.K_ESCAPE]:
             return
 
         space_last = space_now
