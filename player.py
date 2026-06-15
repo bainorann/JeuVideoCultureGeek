@@ -15,6 +15,8 @@ class Player:
         # below are defined x and y coords within a room chunk (16x16)
         self._localx = 6
         self._localy = 4
+        self._bank = 0
+        self.bag = []
 
     def move(self, dx, dy, floor):
         # if self._localx>=14 or self._localx<=2 or self._localy>=7 or self._localy<=1:

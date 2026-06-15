@@ -1,9 +1,11 @@
 import tests.layouts as layouts
 import tests.layouts_2 as layouts2
+from bank import bank
 from input_handler import handle_input
 from lasminas import casino_game
 from map import Floor, Room, show_floor
 from player import Player
+from shop import shop
 from tests.helpers import make_display
 
 
@@ -28,7 +30,7 @@ def run_hub(running, player):
             floor.visit_room(x, y)
 
     while running:
-        print(player.x(), player.y())
+        print(player.x(), player.y(), player.localx(), player.localy())
         running = handle_input(player, floor)
         floor.visit_room(player.x(), player.y())
         show_floor(floor, display)
@@ -47,7 +49,7 @@ def run_hub(running, player):
             and player.localy() <= 5
             and player.localy() >= 3
         ):
-            run_dungeon(display, running)
+            run_dungeon(display, running, player)
 
         if (
             (player.x(), player.y()) == (1, 1)
@@ -55,8 +57,25 @@ def run_hub(running, player):
             and player.localx() <= 7
             and player.localx() >= 6
         ):
-            print("CACAAAAA ATTENTION CACAAAA")
             run_casino(display, running, player)
+
+        if (
+            (player.x(), player.y()) == (3, 1)
+            and player.localy() == 3
+            and player.localx() <= 15
+            and player.localx() >= 14
+        ):
+            print("yo")
+            run_banque(display, running, player)
+
+        if (
+            (player.x(), player.y()) == (1, 2)
+            and player.localy() == 7
+            and player.localx() <= 5
+            and player.localx() >= 4
+        ):
+            print("yo")
+            run_merchant(display, running, player)
 
 
 def run_casino(display, running, player):
@@ -67,7 +86,19 @@ def run_casino(display, running, player):
         player.set_position(1, 1, 6, 4)
 
 
-def run_dungeon(display, running):
+def run_banque(display, running, player):
+    if running:
+        bank(display, player)
+        player.set_position(3, 1, 13, 3)
+
+
+def run_merchant(display, running, player):
+    if running:
+        shop(display, player)
+        player.set_position(1, 2, 6, 7)
+
+
+def run_dungeon(display, running, player):
     floor = Floor()
 
     room_coords = [
@@ -128,8 +159,7 @@ def run_dungeon(display, running):
         room = Room(mat, layout, 1, i, (150, 150, 255))
         floor.add_room(x, y, room)
 
-    player = Player(0, 2)
-    # enemy = enemies.spawn_enemy(0, 0, 2, 1)
+        player.set_position(0, 2, 4, 4)  # enemy = enemies.spawn_enemy(0, 0, 2, 1)
     while running:
         running = handle_input(player, floor)
         floor.visit_room(player.x(), player.y())
