@@ -83,8 +83,8 @@ def check_wall(player, floor, dx, dy):
         if (
             player.localx() == 0
             and (dy != 0 or dx >= 0)
-            and player.localy() != 0
-            and player.localy() != 7
+            and (player.localy() != 0 or dy>0)
+            and (player.localy() != 7 or dy<0)
         ):
             if curr_room.mat()[player.localx() + dx][player.localy() + dy] == 0:
                 return 1
@@ -93,8 +93,8 @@ def check_wall(player, floor, dx, dy):
         if (
             player.localx() == 15
             and (dy != 0 or dx <= 0)
-            and player.localy() != 0
-            and player.localy() != 7
+            and (player.localy() != 0 or dy>0)
+            and (player.localy() != 7 or dy<0)
         ):
             if curr_room.mat()[player.localx() + dx][player.localy() + dy] == 0:
                 return 2
@@ -103,13 +103,13 @@ def check_wall(player, floor, dx, dy):
         if (
             player.localy() == 0
             and (dx != 0 or dy >= 0)
-            and player.localx() != 0
-            and player.localx() != 15
+            and (player.localx() != 0 or dx>0)
+            and (player.localx() != 15 or dx<0)
         ) or (
             player.localy() == 7
             and (dx != 0 or dy <= 0)
-            and player.localx() != 0
-            and player.localx() != 15
+            and (player.localx() != 0 or dx>0)
+            and (player.localx() != 15 or dx<0)
         ):
             if curr_room.mat()[player.localx() + dx][player.localy() + dy] == 0:
                 return 3

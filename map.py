@@ -89,6 +89,6 @@ def show_floor(f, display):
                 display.render_ascii(
                     curr_room.layout(),
                     colour,
-                    j * display._fontw * 15,
+                    j * display._fontw * 14.66,
                     i * display._fonth * 8,
                 )
