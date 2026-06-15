@@ -30,7 +30,7 @@ l_run = r"""
 ██     FUIR     ██
 ██████████████████"""
 
-monster = r"""
+monster = r"""'
              |
              |
              |
@@ -52,7 +52,7 @@ monster = r"""
           ||   ||
           /\   /\ """
 
-monster_hit = r"""
+monster_hit = r"""'
              |
              |
              |
@@ -74,7 +74,7 @@ monster_hit = r"""
           ||   ||
           /\   /\ """
 
-monster_attack = r"""
+monster_attack = r"""'
              |
              |
              |
@@ -204,7 +204,7 @@ def draw_end_screen(display, win):
             ("",                    (255, 255, 255)),
             ("L'ennemi a été vaincu.",  (200, 255, 200)),
             ("",                    (255, 255, 255)),
-            ("[ ESPACE ] pour continuer", (180, 180, 180)),
+            ("[ ENTREE ] pour continuer", (180, 180, 180)),
         ]
     else:
         lines = [
@@ -212,7 +212,7 @@ def draw_end_screen(display, win):
             ("",                    (255, 255, 255)),
             ("Vous avez succombé à vos blessures.", (255, 180, 180)),
             ("",                    (255, 255, 255)),
-            ("[ ESPACE ] pour continuer", (180, 180, 180)),
+            ("[ ENTREE ] pour continuer", (180, 180, 180)),
         ]
 
     # Boîte centrale semi-transparente
@@ -353,7 +353,7 @@ def combat(display, player1, enemy1, bag, enemy_sprite=None):
 
         current_time = time.time()
         keys = pygame.key.get_pressed()
-        space_now = keys[pygame.K_SPACE]
+        space_now = keys[pygame.K_RETURN]
 
         # ── Écran de fin ─────────────────────────────────────────────
         if state == "end":
@@ -410,7 +410,7 @@ def combat(display, player1, enemy1, bag, enemy_sprite=None):
                 dx = diff_spacing * (i + 1) - len(d["name"]) * 4
                 display.render_ascii(d["name"], col, dx, SH // 2 - 10)
 
-            hint = "<- -> choisir   ESPACE valider   ECHAP annuler"
+            hint = "<- -> choisir   ENTREE valider   BACKSPACE annuler"
             approx_w = len(hint) * 8
             display.render_ascii(hint, (160, 160, 160), SW // 2 - approx_w // 2, SH // 2 + 50)
 
@@ -432,7 +432,7 @@ def combat(display, player1, enemy1, bag, enemy_sprite=None):
                     qte_start      = time.time()
                     qte_time_limit = QTE_ATTACK_TIME_LIMIT
                     state = "attack_qte"
-                elif keys[pygame.K_ESCAPE]:
+                elif keys[pygame.K_BACKSPACE]:
                     state = "main0"
 
         # ── QTE Attaque ───────────────────────────────────────────────
@@ -447,7 +447,7 @@ def combat(display, player1, enemy1, bag, enemy_sprite=None):
 
             draw_qte_bar(display, pos, qte_zone, qte_crit,
                          "ATTAQUE - frappez au bon moment !",
-                         "[ ESPACE ] pour frapper")
+                         "[ ENTREE ] pour frapper")
 
             result = None
             if space_now and not space_last:
@@ -510,7 +510,7 @@ def combat(display, player1, enemy1, bag, enemy_sprite=None):
 
             draw_qte_bar(display, pos, qte_zone, qte_crit,
                          "DEFENSE - parez l'attaque ennemie !",
-                         "[ ESPACE ] pour parer")
+                         "[ ENTREE ] pour parer")
 
             result = None
             if space_now and not space_last:
@@ -560,7 +560,7 @@ def combat(display, player1, enemy1, bag, enemy_sprite=None):
                 no_item_msg = "Aucun objet disponible !"
                 approx_w = len(no_item_msg) * 8
                 display.render_ascii(no_item_msg, (255, 255, 255), SW // 2 - approx_w // 2, SH // 2)
-                hint = "[ ESPACE ] pour revenir"
+                hint = "[ ENTREE ] pour revenir"
                 approx_w = len(hint) * 8
                 display.render_ascii(hint, (160, 160, 160), SW // 2 - approx_w // 2, SH // 2 + 30)
                 if space_now and not space_last:
@@ -580,7 +580,7 @@ def combat(display, player1, enemy1, bag, enemy_sprite=None):
                     iy = SH // 2 - 60 + row_idx * 28
                     display.render_ascii(f"{item._name} x{item._qty}", col_sel, ix, iy)
 
-                hint2 = "Flèches: naviguer   ESPACE: utiliser   ECHAP: annuler"
+                hint2 = "Flèches: naviguer   ENTREE: utiliser   BACKSPACE: annuler"
                 approx_w = len(hint2) * 8
                 display.render_ascii(hint2, (160, 160, 160), SW // 2 - approx_w // 2, SH - 60)
 
@@ -602,7 +602,7 @@ def combat(display, player1, enemy1, bag, enemy_sprite=None):
                         use(item, player1)
                         # Utilisation d'objet : pas d'animation, tour ennemi direct
                         state = "main1"
-                    elif keys[pygame.K_ESCAPE]:
+                    elif keys[pygame.K_BACKSPACE]:
                         state = "main0"
 
         # ── Fuite ─────────────────────────────────────────────────────
@@ -614,7 +614,7 @@ def combat(display, player1, enemy1, bag, enemy_sprite=None):
             pygame.time.delay(900)
             return "quit"
 
-        if keys[pygame.K_q]:
+        if keys[pygame.K_ESCAPE]:
             return "quit"
 
         space_last = space_now
