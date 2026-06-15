@@ -73,7 +73,7 @@ def run():
         room = Room(mat, layout, 1, i, (150, 150, 255))
         floor.add_room(x, y, room)
 
-    player = Player(0, 2)
+    player = Player(4, 3)
     enemy = enemies.spawn_enemy(0, 0, 2, 1)
     running = True
     while running:
