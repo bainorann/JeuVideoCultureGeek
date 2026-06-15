@@ -296,13 +296,12 @@ def casino_game(display, dette=1000000000, starting_money=20, mode="balanced"):
     fs_sm = max(14, SH // 50)
     fs_suit = max(30, SH // 18)
 
-    # font_path = "assets/fonts/DejaVuSansMono.ttf"
-    # Font = pygame.font.Font
-    # font_big = Font(font_path, fs_big)
-    font_big = pygame.font.SysFont("monospace", fs_big, bold=True)
-    font_mid = pygame.font.SysFont("monospace", fs_mid)
-    font_sm = pygame.font.SysFont("monospace", fs_sm)
-    font_suit = pygame.font.SysFont("monospace", fs_suit, bold=True)
+    font_path = "assets/fonts/DejaVuSansMono.ttf"
+    Font = pygame.font.Font
+    font_big = Font(font_path, fs_big)
+    font_mid  = Font(font_path, fs_mid)
+    font_sm   = Font(font_path, fs_sm)
+    font_suit = Font(font_path, fs_suit)
 
     CARD_W = max(90, SW // 11)
     CARD_H = int(CARD_W * 1.45)
@@ -531,7 +530,7 @@ def casino_game(display, dette=1000000000, starting_money=20, mode="balanced"):
                     if result == "quit":
                         return casino.wallet
 
-                elif event.key == pygame.K_ESCAPE:
+                elif event.key == pygame.K_BACKSPACE:
                     # Retour arrière contextuel
                     if state == "change":
                         casino.wallet += casino.bet
@@ -541,7 +540,7 @@ def casino_game(display, dette=1000000000, starting_money=20, mode="balanced"):
                         casino.bet = 0
                         nonlocal_set_state("deal")
 
-                elif event.key == pygame.K_q:
+                elif event.key == pygame.K_ESCAPE:
                     return casino.wallet
 
         # ── DESSIN ───────────────────────────────────────────────────

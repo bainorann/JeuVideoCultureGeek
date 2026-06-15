@@ -24,11 +24,14 @@ C_BORDER_D = ( 55,  55,  55)   # bordure bouton désactivé
 # (chez le marchand) et son prix de revente (au joueur).
 
 SHOP_STOCK = [
-    {"name": "Potion",   "hp": 5,  "sh": 0, "st": 0, "buy": 15, "sell": 5},
-    {"name": "Bouclier", "hp": 0,  "sh": 3, "st": 0, "buy": 35, "sell": 12},
-    {"name": "Epee",     "hp": 0,  "sh": 0, "st": 4, "buy": 50, "sell": 18},
-    {"name": "Elixir",   "hp": 10, "sh": 1, "st": 1, "buy": 80, "sell": 30},
-    {"name": "Antidote", "hp": 3,  "sh": 0, "st": 0, "buy": 10, "sell": 3},
+    {"name": "Potion Soin (I)",   "hp": 5,  "sh": 0, "st": 0, "buy": 200, "sell": 100},
+    {"name": "Potion Soin (II)",   "hp": 8,  "sh": 0, "st": 0, "buy": 500, "sell": 250},
+    {"name": "Potion Soin (III)",   "hp": 12,  "sh": 0, "st": 0, "buy": 1000, "sell": 500},
+    {"name": "Potion Défensive (I)", "hp": 0,  "sh": 3, "st": 0, "buy": 120, "sell": 60},
+    {"name": "Potion Défensive (II)", "hp": 0,  "sh": 6, "st": 0, "buy": 225, "sell": 110},
+    {"name": "Potion Offensive (I)", "hp": 0,  "sh": 0, "st": 4, "buy": 200, "sell": 100},
+    {"name": "Potion Offensive (II)", "hp": 0,  "sh": 0, "st": 8, "buy": 500, "sell": 250},
+    {"name": "Elixir",   "hp": 3, "sh": 3, "st": 3, "buy": 700, "sell": 400},
 ]
 
 
@@ -143,7 +146,7 @@ def shop(display, player):
 
         current_time = time.time()
         keys         = pygame.key.get_pressed()
-        space_now    = keys[pygame.K_SPACE]
+        space_now    = keys[pygame.K_RETURN]
 
         # ── Panneau principal centré ─────────────────────────────────
         panel_w = int(SW * 0.66)
@@ -170,7 +173,7 @@ def shop(display, player):
                          (panel_x + 16, sep_y2), (panel_x + panel_w - 16, sep_y2), 1)
 
         # ── Hint navigation (toujours visible) ───────────────────────
-        hint = "<- -> haut/bas naviguer    ESPACE valider    ECHAP retour"
+        hint = "<- -> haut/bas naviguer    ENTREE valider    BACKSPACE retour"
         display.render_ascii(hint, C_GREY, _cx(screen, hint), panel_y + panel_h - 30)
 
         # ════════════════════════════════════════════════════════════
@@ -262,7 +265,7 @@ def shop(display, player):
                 elif keys[pygame.K_DOWN]:
                     sel = sel + COLS if sel + COLS < n + 1 else n
                     last_move_time = current_time
-                elif keys[pygame.K_ESCAPE]:
+                elif keys[pygame.K_BACKSPACE]:
                     state = "main"
                     sel   = 0
 
@@ -336,7 +339,7 @@ def shop(display, player):
                 elif keys[pygame.K_DOWN]:
                     sel = sel + COLS if sel + COLS < n + 1 else n
                     last_move_time = current_time
-                elif keys[pygame.K_ESCAPE]:
+                elif keys[pygame.K_BACKSPACE]:
                     state = "main"
                     sel   = 0
 
@@ -347,7 +350,7 @@ def shop(display, player):
                 else:
                     sell_item(player, usable_items[sel])
 
-        if keys[pygame.K_q]:
+        if keys[pygame.K_ESCAPE]:
             return
 
         space_last = space_now
@@ -360,10 +363,8 @@ if __name__ == "__main__":
     d = Display(900, 650, "Magasin")
 
     p = Player()
-    p.money = 100
+    p.money = 1800
     p.bag = [
-        Item("Potion", 5, 0, 0, 2),
-        Item("Epee", 0, 0, 4, 1),
     ]
 
     shop(d, p)
