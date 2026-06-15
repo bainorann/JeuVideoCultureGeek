@@ -87,6 +87,17 @@ class Casino:
         if 2 in counts:                  return "PAIRE"
         return "CARTE HAUTE"
 
+    def hand_rank(self, r):
+        """Indice de force de la main : 0 = carte haute ... 6 = quinte flush royale."""
+        counts = sorted([c for c in r if c > 0], reverse=True)
+        if 5 in counts:                  return 6
+        if 4 in counts:                  return 5
+        if 3 in counts and 2 in counts:  return 4
+        if 3 in counts:                  return 3
+        if counts.count(2) == 2:         return 2
+        if 2 in counts:                  return 1
+        return 0
+
 # ──────────────────────────────────────────────
 #  Helpers d'affichage
 # ──────────────────────────────────────────────
@@ -190,11 +201,22 @@ def draw_bet_selector(screen, font, bet, wallet, cx, y, btn_h, focused_idx=None)
 #  Fonction principale
 # ──────────────────────────────────────────────
 
-def casino_game(display, starting_money=20):
+def casino_game(display, dette=1000000000, starting_money=20, mode="balanced"):
     """
     Retourne le solde final.
     États : deal -> bet -> change -> result -> (deal | quit)
     Entièrement jouable au clavier.
+
+    mode :
+      "balanced" : jeu normal, bouton QUITTER disponible.
+      "unfair"   : le croupier triche pour gagner dès que la main du
+                   joueur est plus faible qu'un carré. Pas de bouton
+                   QUITTER ; la partie s'arrête automatiquement quand
+                   le portefeuille du joueur atteint 0.
+      "fair"     : le croupier triche pour NE PAS gagner quand le joueur
+                   serait sur le point de perdre sa mise. Pas de bouton
+                   QUITTER ; la partie s'arrête automatiquement quand le
+                   portefeuille du joueur dépasse 10000.
     """
     screen = display.screen
     clock  = display.clock
@@ -225,6 +247,8 @@ def casino_game(display, starting_money=20):
     BTN_W_LG   = max(160, SW // 6)
     CX         = SW // 2
 
+    has_quit = (mode == "balanced")
+
     casino      = Casino(starting_money)
     state       = "deal"
     pl_hand     = []
@@ -237,36 +261,85 @@ def casino_game(display, starting_money=20):
     result_done = False
 
     # ── Curseurs clavier par état ────────────────────────────────────
-    # deal   : 0 = DISTRIBUER, 1 = QUITTER
-    # bet    : 0-3 = boutons mise, 4 = CONFIRMER, 5 = QUITTER
-    # change : curseur sur les cartes (card_cursor), + bouton via Tab
-    #          btn_cursor : 0 = ECHANGER&VOIR, 1 = QUITTER
-    # result : 0 = REJOUER, 1 = QUITTER
-    btn_cursor = 0   # curseur sur les boutons hors cartes
+    # deal   : 0 = DISTRIBUER, (1 = QUITTER si has_quit)
+    # bet    : 0-3 = boutons mise, 4 = CONFIRMER, (5 = QUITTER si has_quit)
+    # change : 0-4 = cartes, 5 = ECHANGER&VOIR, (6 = QUITTER si has_quit)
+    # result : 0 = REJOUER, (1 = QUITTER si has_quit)
+    btn_cursor = 0
 
     btn_confirm = pygame.Rect(CX - BTN_W_LG - 10, SH - BTN_H - 20, BTN_W_LG, BTN_H)
     btn_quit    = pygame.Rect(CX + 10,             SH - BTN_H - 20, BTN_W_SM, BTN_H)
 
-    # ── Nombre de positions de curseur par état ──────────────────────
-    # deal   : [DISTRIBUER, QUITTER]           -> 2
-    # bet    : [-10, -1, +1, +10, CONFIRMER, QUITTER] -> 6
-    # change : [carte0..4 = 0..4, ECHANGER=5, QUITTER=6] -> 7
-    # result : [REJOUER, QUITTER]              -> 2
-
     def n_positions():
-        if state == "deal":   return 2
-        if state == "bet":    return 6
-        if state == "change": return 7
-        if state == "result": return 2
+        if state == "deal":   return 2 if has_quit else 1
+        if state == "bet":    return 6 if has_quit else 5
+        if state == "change": return 7 if has_quit else 6
+        if state == "result": return 2 if has_quit else 1
         return 1
 
-    def clamp_cursor():
-        nonlocal btn_cursor, card_cursor
-        n = n_positions()
-        btn_cursor = btn_cursor % n
-        if state == "change":
-            if btn_cursor <= 4:
-                card_cursor = btn_cursor
+    def nonlocal_set_state(s):
+        nonlocal state, btn_cursor
+        state      = s
+        btn_cursor = 0
+
+    # ── Triche du croupier ────────────────────────────────────────
+    def rig_hand(check, max_attempts=400):
+        """Cherche une main satisfaisant `check`, sinon retourne la
+        dernière main testée (cas extrême où c'est impossible)."""
+        attempt = [randint(0, 5) for _ in range(5)]
+        for _ in range(max_attempts):
+            attempt = [randint(0, 5) for _ in range(5)]
+            if check(attempt):
+                return attempt
+        return attempt
+
+    def reveal_dealer(pl_final):
+        """Calcule la main finale du croupier selon le mode choisi."""
+        dl_final = casino.smart_change(dl_hand[:])
+        spl      = casino.score(casino.sort(pl_final))[0]
+
+        if mode == "balanced":
+            no = randint(1,3)
+            if max(casino.sort(pl_final)) < 4 and no==3:
+                dl_final = rig_hand(
+                    lambda h: casino.score(casino.sort(h))[0] > spl)
+
+        if mode == "unfair":
+            # Le croupier triche dès que le joueur n'a pas au moins un carré
+            if max(casino.sort(pl_final)) < 4:
+                dl_final = rig_hand(
+                    lambda h: casino.score(casino.sort(h))[0] > spl)
+
+        elif mode == "fair":
+            sdl     = casino.score(casino.sort(dl_final))[0]
+            pl_rank = casino.hand_rank(casino.sort(pl_final))
+            # Une défaite ferait-elle tomber le solde à 0 ?
+            # (la mise a déjà été déduite du portefeuille)
+            ruin = (casino.wallet == 0)
+
+            if pl_rank >= 2:
+                # Double paire ou mieux : victoire garantie
+                if sdl >= spl:
+                    dl_final = rig_hand(
+                        lambda h: casino.score(casino.sort(h))[0] < spl)
+            elif ruin:
+                # Manche fatidique : le joueur ne peut pas perdre
+                # (victoire ou égalité acceptées)
+                if sdl > spl:
+                    dl_final = rig_hand(
+                        lambda h: casino.score(casino.sort(h))[0] <= spl)
+            # Sinon : le croupier joue normalement, le joueur peut perdre
+
+        return dl_final
+
+    def resolve_change():
+        """Transition CHANGE -> RESULT (clic ou Entrée)."""
+        nonlocal pl_hand, dl_hand, result_done
+        pl_final  = casino.change(pl_hand, list(selected))
+        pl_hand[:] = pl_final
+        dl_hand[:] = reveal_dealer(pl_final)
+        result_done = False
+        nonlocal_set_state("result")
 
     # ── Confirmation du bouton actuellement focalisé ─────────────────
     def confirm_focused():
@@ -280,30 +353,27 @@ def casino_game(display, starting_money=20):
                 card_cursor = 0
                 casino.bet  = 0
                 nonlocal_set_state("bet")
-            elif btn_cursor == 1:        # QUITTER
+            elif has_quit and btn_cursor == 1:   # QUITTER
                 return "quit"
 
         elif state == "bet":
             if btn_cursor <= 3:          # boutons mise
-                _, delta = bet_rects[btn_cursor] if bet_rects else (None, [(-10,),(- 1),(1),(10)][btn_cursor])
+                _, delta = bet_rects[btn_cursor] if bet_rects else (None, [-10, -1, 1, 10][btn_cursor])
                 new_bet    = casino.bet + delta
                 casino.bet = max(0, min(casino.wallet, new_bet))
             elif btn_cursor == 4:        # CONFIRMER
                 if casino.bet > 0:
                     casino.wallet -= casino.bet
                     nonlocal_set_state("change")
-            elif btn_cursor == 5:        # QUITTER
+            elif has_quit and btn_cursor == 5:   # QUITTER
                 return "quit"
 
         elif state == "change":
             if btn_cursor <= 4:          # sélection carte
                 selected.symmetric_difference_update({btn_cursor})
             elif btn_cursor == 5:        # ECHANGER & VOIR
-                pl_hand[:] = casino.change(pl_hand, list(selected))
-                dl_hand[:] = casino.smart_change(dl_hand)
-                result_done = False
-                nonlocal_set_state("result")
-            elif btn_cursor == 6:        # QUITTER
+                resolve_change()
+            elif has_quit and btn_cursor == 6:   # QUITTER
                 return "quit"
 
         elif state == "result":
@@ -312,18 +382,10 @@ def casino_game(display, starting_money=20):
                 result_done = False
                 casino.bet  = 0
                 nonlocal_set_state("deal")
-            elif btn_cursor == 1:        # QUITTER
+            elif has_quit and btn_cursor == 1:   # QUITTER
                 return "quit"
 
         return None
-
-    # Helpers pour modifier state depuis les sous-fonctions
-    _state_box = ["deal"]
-
-    def nonlocal_set_state(s):
-        nonlocal state, btn_cursor
-        state      = s
-        btn_cursor = 0
 
     # ── Boucle principale ────────────────────────────────────────────
     while True:
@@ -335,13 +397,13 @@ def casino_game(display, starting_money=20):
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 mx, my = event.pos
 
-                if btn_quit.collidepoint(mx, my):
+                if has_quit and btn_quit.collidepoint(mx, my):
                     return casino.wallet
 
                 if state == "deal":
                     if btn_confirm.collidepoint(mx, my):
-                        pl_hand = casino.hand()
-                        dl_hand = casino.hand()
+                        pl_hand    = casino.hand()
+                        dl_hand    = casino.hand()
                         selected.clear()
                         card_cursor = 0
                         casino.bet  = 0
@@ -364,10 +426,7 @@ def casino_game(display, starting_money=20):
                         if r.collidepoint(mx, my):
                             selected.symmetric_difference_update({i})
                     if btn_confirm.collidepoint(mx, my):
-                        pl_hand = casino.change(pl_hand, list(selected))
-                        dl_hand = casino.smart_change(dl_hand)
-                        result_done = False
-                        nonlocal_set_state("result")
+                        resolve_change()
 
                 elif state == "result":
                     if btn_confirm.collidepoint(mx, my) and casino.wallet > 0:
@@ -404,11 +463,20 @@ def casino_game(display, starting_money=20):
                         casino.bet = 0
                         nonlocal_set_state("deal")
 
+                elif event.key == pygame.K_q:
+                    return casino.wallet
+
         # ── DESSIN ───────────────────────────────────────────────────
         screen.fill(COLOR_BG)
 
         draw_text(screen, font_mid, f"Portefeuille : {casino.wallet}", 20, 16, COLOR_YELLOW)
         draw_text(screen, font_mid, f"Mise : {casino.bet}", 20, 16 + fs_mid + 4, COLOR_WHITE)
+        if mode=="fair":
+            msg = font_big.render(f"Objectif : {max(100*starting_money, 10000)}", True, COLOR_GRAY)
+            screen.blit(msg, (CX - msg.get_width() // 2, 16))
+        if mode=="balanced":
+            msg = font_big.render(f"Dette : {dette}", True, COLOR_GRAY)
+            screen.blit(msg, (CX - msg.get_width() // 2, 16))
 
         pygame.draw.line(screen, COLOR_DIMMED, (0, SEP_Y), (SW, SEP_Y), 1)
         draw_text(screen, font_sm, "CROUPIER", 20, DEALER_Y - fs_sm - 4, COLOR_GRAY)
@@ -420,8 +488,9 @@ def casino_game(display, starting_money=20):
             screen.blit(msg, (CX - msg.get_width() // 2, SEP_Y // 2 - msg.get_height() // 2))
             draw_button(screen, font_mid, "DISTRIBUER", btn_confirm,
                         active=True, color=COLOR_YELLOW, focused=(btn_cursor == 0))
-            draw_button(screen, font_sm,  "QUITTER",    btn_quit,
-                        color=COLOR_GRAY, focused=(btn_cursor == 1))
+            if has_quit:
+                draw_button(screen, font_sm, "QUITTER", btn_quit,
+                            color=COLOR_GRAY, focused=(btn_cursor == 1))
 
         elif state == "bet":
             draw_hand(screen, font_mid, font_suit,
@@ -435,7 +504,6 @@ def casino_game(display, starting_money=20):
                       f"Mise actuelle : {casino.bet}  /  Portefeuille : {casino.wallet}",
                       CX - tw // 2, MID_Y - fs_mid - 10, COLOR_YELLOW)
 
-            # focused_idx 0-3 sur les boutons de mise
             focused_bet = btn_cursor if btn_cursor <= 3 else None
             bet_rects   = draw_bet_selector(screen, font_mid,
                                             casino.bet, casino.wallet,
@@ -445,13 +513,13 @@ def casino_game(display, starting_money=20):
                         active=casino.bet > 0,
                         color=COLOR_GREEN if casino.bet > 0 else COLOR_GRAY,
                         focused=(btn_cursor == 4))
-            draw_button(screen, font_sm, "QUITTER", btn_quit,
-                        color=COLOR_GRAY, focused=(btn_cursor == 5))
+            if has_quit:
+                draw_button(screen, font_sm, "QUITTER", btn_quit,
+                            color=COLOR_GRAY, focused=(btn_cursor == 5))
 
         elif state == "change":
             draw_hand(screen, font_mid, font_suit,
                       dl_hand, CX, DEALER_Y, CARD_W, CARD_H, CARD_GAP, hidden=True)
-            # card_cursor actif seulement si btn_cursor <= 4
             active_card_cursor = card_cursor if btn_cursor <= 4 else None
             draw_hand(screen, font_mid, font_suit,
                       pl_hand, CX, PLAYER_Y, CARD_W, CARD_H, CARD_GAP,
@@ -464,8 +532,9 @@ def casino_game(display, starting_money=20):
 
             draw_button(screen, font_mid, "ECHANGER & VOIR", btn_confirm,
                         active=True, color=COLOR_GREEN, focused=(btn_cursor == 5))
-            draw_button(screen, font_sm, "QUITTER", btn_quit,
-                        color=COLOR_GRAY, focused=(btn_cursor == 6))
+            if has_quit:
+                draw_button(screen, font_sm, "QUITTER", btn_quit,
+                            color=COLOR_GRAY, focused=(btn_cursor == 6))
 
         elif state == "result":
             draw_hand(screen, font_mid, font_suit, dl_hand, CX, DEALER_Y, CARD_W, CARD_H, CARD_GAP)
@@ -501,18 +570,37 @@ def casino_game(display, starting_money=20):
             screen.blit(rmsg, (CX - rmsg.get_width() // 2,
                                SEP_Y // 2 - rmsg.get_height() // 2))
 
-            if casino.wallet > 0:
+            # Condition de fin spécifique au mode
+            game_over_unfair = (mode == "unfair" and casino.wallet <= 0)
+            objective_fair   = (mode == "fair" and casino.wallet > max(50*starting_money, 10000))
+
+            if objective_fair:
+                go = font_big.render("OBJECTIF ATTEINT - BRAVO !", True, COLOR_GREEN)
+                screen.blit(go, (CX - go.get_width() // 2,
+                                 SEP_Y // 2 + rmsg.get_height() + 6))
+            elif casino.wallet > 0:
                 draw_button(screen, font_mid, "REJOUER", btn_confirm,
                             active=True, color=COLOR_BLUE, focused=(btn_cursor == 0))
             else:
                 go = font_big.render("GAME OVER - Plus d'argent !", True, COLOR_RED)
                 screen.blit(go, (CX - go.get_width() // 2,
                                  SEP_Y // 2 + rmsg.get_height() + 6))
-            draw_button(screen, font_sm, "QUITTER", btn_quit,
-                        color=COLOR_GRAY, focused=(btn_cursor == 1))
+
+            if has_quit:
+                draw_button(screen, font_sm, "QUITTER", btn_quit,
+                            color=COLOR_GRAY, focused=(btn_cursor == 1))
 
         pygame.display.flip()
         clock.tick(60)
+
+        # ── Fin automatique de partie (modes "unfair" / "fair") ──────
+        if state == "result" and result_done:
+            if mode == "unfair" and casino.wallet <= 0:
+                pygame.time.delay(1500)
+                return casino.wallet
+            if mode == "fair" and casino.wallet > max(50*starting_money, 10000):
+                pygame.time.delay(1500)
+                return casino.wallet
 
 
 # ──────────────────────────────────────────────
@@ -522,6 +610,6 @@ def casino_game(display, starting_money=20):
 if __name__ == "__main__":
     from display import Display
     d     = Display(title="Casino")
-    final = casino_game(d, starting_money=20)
+    final = casino_game(d, starting_money=20, mode="balanced")
     print(f"Solde final : {final}")
     d.close()
