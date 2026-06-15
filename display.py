@@ -9,12 +9,12 @@ class Display:
     def __init__(self, width=800, height=600, title="ASCII Game"):
         pygame.init()
         info = pygame.display.Info()
-        screen_width = info.current_w
-        screen_height = info.current_h
+        # screen_width = info.current_w
+        # screen_height = info.current_h
         self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
         pygame.display.set_caption(title)
         self.clock = pygame.time.Clock()
-        self.font = pygame.font.SysFont("monospace", choose_font())
+        self.font = pygame.font.Font("assets/fonts/DejaVuSansMono.ttf", choose_font())
         self.background_color = (0, 0, 0)
         self.text_color = (255, 255, 255)
         self._fontw, self._fonth = (self.font).size("%")
@@ -30,7 +30,7 @@ class Display:
 
     def render_char(self, char, text_color, grid_x, grid_y, offset_x=0, offset_y=0):
         surface = self.font.render(char, True, text_color)
-        x = (offset_x * 16 + grid_x) * (self._fontw - 1)
+        x = (offset_x * 16 + grid_x) * self._fontw
         y = (offset_y * 8 + grid_y) * self._fonth
         self.screen.blit(surface, (x, y))
 

@@ -11,8 +11,8 @@ class Player:
         self._x = x  # between 0 and 9 bc 10 rooms
         self._y = y  # between 0 and 5 bc 6 rooms
         # below are defined x and y coords within a room chunk (16x16)
-        self._localx = 5
-        self._localy = 5
+        self._localx = 6
+        self._localy = 4
 
     def move(self, dx, dy, floor):
         # if self._localx>=14 or self._localx<=2 or self._localy>=7 or self._localy<=1:
@@ -83,8 +83,8 @@ def check_wall(player, floor, dx, dy):
         if (
             player.localx() == 0
             and (dy != 0 or dx >= 0)
-            and (player.localy() != 0 or dy>0)
-            and (player.localy() != 7 or dy<0)
+            and (player.localy() != 0 or dy > 0)
+            and (player.localy() != 7 or dy < 0)
         ):
             if curr_room.mat()[player.localx() + dx][player.localy() + dy] == 0:
                 return 1
@@ -93,8 +93,8 @@ def check_wall(player, floor, dx, dy):
         if (
             player.localx() == 15
             and (dy != 0 or dx <= 0)
-            and (player.localy() != 0 or dy>0)
-            and (player.localy() != 7 or dy<0)
+            and (player.localy() != 0 or dy > 0)
+            and (player.localy() != 7 or dy < 0)
         ):
             if curr_room.mat()[player.localx() + dx][player.localy() + dy] == 0:
                 return 2
@@ -103,13 +103,13 @@ def check_wall(player, floor, dx, dy):
         if (
             player.localy() == 0
             and (dx != 0 or dy >= 0)
-            and (player.localx() != 0 or dx>0)
-            and (player.localx() != 15 or dx<0)
+            and (player.localx() != 0 or dx > 0)
+            and (player.localx() != 15 or dx < 0)
         ) or (
             player.localy() == 7
             and (dx != 0 or dy <= 0)
-            and (player.localx() != 0 or dx>0)
-            and (player.localx() != 15 or dx<0)
+            and (player.localx() != 0 or dx > 0)
+            and (player.localx() != 15 or dx < 0)
         ):
             if curr_room.mat()[player.localx() + dx][player.localy() + dy] == 0:
                 return 3
