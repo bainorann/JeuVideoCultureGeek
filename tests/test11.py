@@ -30,7 +30,7 @@ def run_hub(running, player):
             floor.visit_room(x, y)
 
     while running:
-        print(player.x(), player.y(), player.localx(), player.localy())
+        # print(player.x(), player.y(), player.localx(), player.localy())
         running = handle_input(player, floor)
         floor.visit_room(player.x(), player.y())
         show_floor(floor, display)
@@ -74,7 +74,6 @@ def run_hub(running, player):
             and player.localx() <= 5
             and player.localx() >= 4
         ):
-            print("yo")
             run_merchant(display, running, player)
 
 
