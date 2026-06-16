@@ -182,6 +182,36 @@ def draw_qte_bar(display, pos, zone, crit, title, hint):
     display.render_ascii(hint,  (190, 190, 190), bar_x, bar_y + bar_h + 18)
 
 
+def ascii_size(display, text):
+    """Largeur/hauteur en pixels d'un bloc ascii (texte multi-lignes),
+    cohérent avec la façon dont Display.render_ascii le découpe."""
+    lines = text.strip().split('\n')
+    w = max(len(line) for line in lines) * display._fontw
+    h = len(lines) * display._fonth
+    return w, h
+
+
+def enemy_sprite_position(display, enemy_sprite, bottom_limit, top_margin=None):
+    """Calcule (x, y) pour afficher `enemy_sprite` centré horizontalement
+    sur l'écran, et centré verticalement dans la zone comprise entre
+    `top_margin` et `bottom_limit` (au-dessus des boutons / de la barre QTE),
+    quelle que soit la taille du sprite."""
+    screen = display.screen
+    SW, SH = screen.get_size()
+
+    if top_margin is None:
+        top_margin = int(SH * 0.03)
+
+    w, h = ascii_size(display, enemy_sprite)
+
+    x = SW // 2 - w // 2
+
+    available = max(0, bottom_limit - top_margin)
+    y = top_margin + max(0, (available - h) // 2)
+
+    return x, y
+
+
 def draw_centered_title(display, text, color, y_ratio=0.30):
     """Affiche un texte centré horizontalement à une hauteur relative."""
     screen = display.screen
@@ -270,8 +300,8 @@ def anim_hit_enemy(display, enemy_sprite, player1, enemy1, message, msg_color):
     for sprite_col, flash_alpha, offset_x in frames:
         display.clear()
         draw_stats(display, player1, enemy1)
-        monster_x = SW // 2 - 80 + offset_x
-        monster_y = SH // 2 - 200
+        monster_x, monster_y = enemy_sprite_position(display, enemy_sprite, SH - 200)
+        monster_x += offset_x
         display.render_ascii(enemy_sprite, sprite_col, monster_x, monster_y)
 
         if flash_alpha > 0:
@@ -294,8 +324,7 @@ def anim_player_hit(display, enemy_sprite, player1, enemy1, message, msg_color):
     for alpha in flash_sequence:
         display.clear()
         draw_stats(display, player1, enemy1)
-        monster_x = SW // 2 - 80
-        monster_y = SH // 2 - 200
+        monster_x, monster_y = enemy_sprite_position(display, enemy_sprite, SH - 200)
         display.render_ascii(enemy_sprite, (255, 255, 255), monster_x, monster_y)
 
         if alpha > 0:
@@ -308,7 +337,14 @@ def anim_player_hit(display, enemy_sprite, player1, enemy1, message, msg_color):
         pygame.time.delay(100)
 
 
-def combat(display, player1, enemy1, bag, enemy_sprite=None):
+def combat(display, player1, enemy1, bag, sprite=None):
+
+    if sprite==None:
+        enemy_sprite = monster
+    else:
+        with open(sprite, "r", encoding="utf-8") as f:
+            enemy_sprite = f.read()
+
     """
     enemy_sprite : chaîne ASCII représentant l'ennemi.
     Si omis, on utilise le sprite 'monster' défini dans ce fichier.
@@ -366,15 +402,14 @@ def combat(display, player1, enemy1, bag, enemy_sprite=None):
         # ── Menu principal ────────────────────────────────────────────
         elif state == "main0":
 
-            # Ennemi centré
-            monster_x = SW // 2 - 80
-            monster_y = SH // 2 - 210
+            # Ennemi centré, au-dessus des boutons
+            btn_y = SH - 160
+            monster_x, monster_y = enemy_sprite_position(display, enemy_sprite, btn_y - 10)
             display.render_ascii(enemy_sprite, (255, 255, 255), monster_x, monster_y)
 
             # Boutons centrés et espacés régulièrement
             btn_count  = len(buttons)
             btn_spacing = SW // (btn_count + 1)
-            btn_y = SH - 160
             for i, button in enumerate(buttons):
                 col = (80, 80, 255) if i == selection_index else (255, 255, 255)
                 bx = btn_spacing * (i + 1) - 90
@@ -438,8 +473,7 @@ def combat(display, player1, enemy1, bag, enemy_sprite=None):
         # ── QTE Attaque ───────────────────────────────────────────────
         elif state == "attack_qte":
 
-            monster_x = SW // 2 - 80
-            monster_y = SH // 2 - 210
+            monster_x, monster_y = enemy_sprite_position(display, enemy_sprite, SH - 200)
             display.render_ascii(enemy_sprite, (255, 255, 255), monster_x, monster_y)
 
             elapsed = time.time() - qte_start
@@ -472,8 +506,7 @@ def combat(display, player1, enemy1, bag, enemy_sprite=None):
                     damage(player1, enemy1, dmg_multiplier)
                     display.clear()
                     draw_stats(display, player1, enemy1)
-                    monster_x = SW // 2 - 80
-                    monster_y = SH // 2 - 210
+                    monster_x, monster_y = enemy_sprite_position(display, enemy_sprite, SH - 200)
                     display.render_ascii(enemy_sprite, (255, 255, 255), monster_x, monster_y)
                     draw_result_message(display, "Coup manque...", (180, 180, 180))
                     display.update()
@@ -501,8 +534,7 @@ def combat(display, player1, enemy1, bag, enemy_sprite=None):
         elif state == "defend_qte":
 
             # L'ennemi s'affiche normalement, sans pose spéciale
-            monster_x = SW // 2 - 80
-            monster_y = SH // 2 - 210
+            monster_x, monster_y = enemy_sprite_position(display, enemy_sprite, SH - 200)
             display.render_ascii(enemy_sprite, (255, 255, 255), monster_x, monster_y)
 
             elapsed = time.time() - qte_start
@@ -543,8 +575,7 @@ def combat(display, player1, enemy1, bag, enemy_sprite=None):
                 # Parade parfaite : simple affichage du message, pas de flash
                 display.clear()
                 draw_stats(display, player1, enemy1)
-                monster_x = SW // 2 - 80
-                monster_y = SH // 2 - 200
+                monster_x, monster_y = enemy_sprite_position(display, enemy_sprite, SH - 200)
                 display.render_ascii(enemy_sprite, (255, 255, 255), monster_x, monster_y)
                 draw_result_message(display, message, msg_color)
                 display.update()
@@ -659,8 +690,9 @@ if __name__ == "__main__":
 
     j = Player()
     e = Player()
-    e._sh = 4
-    e._st = 5
+    e._sh = 20
+    e._hp = 40
+    e._st = 10
 
     potion  = Item('potion',  5, 0, 0, 2)
     shield  = Item('bouclier',0, 2, 0, 1)
