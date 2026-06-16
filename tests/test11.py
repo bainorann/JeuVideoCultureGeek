@@ -7,7 +7,7 @@ import tests.layouts as layouts
 import tests.layouts_2 as layouts2
 from bank import bank
 from comeback import retour
-from dialogue import dialogue
+from dialogue import dialogue, show_text_screen
 from enemies import Enemy
 from fight import combat
 from input_handler import handle_input
@@ -22,12 +22,18 @@ from tests.helpers import make_display
 def run():
     player = Player(1, 1)
     display = make_display("Second Floor Layout")
+
+    pygame.mixer.music.load("assets/music/soul à la plage.wav")
+    pygame.mixer.music.play(-1)
+    show_text_screen(display, "title.txt")
+    pygame.mixer.music.stop()
+
     game_state = {
         "intro": True,
         "fought_mini": False,
         "fought_boss": False,
         "talked": False,
-        "debug": True,
+        "debug": False,
     }
     return run_hub(True, player, display, game_state)
 
@@ -314,8 +320,8 @@ def run_dungeon(display, running, player, game_state):
                 player._money = saved_money + 100
                 flashback_animation(display)
                 dialogue(display, "redemption1.txt", "player.txt")
-                pygame.mixer.music.load("assets/music/prise de drogue.wav")
-                pygame.mixer.music.play(-1)
+                show_text_screen(display, "end.txt")
+                display.close()
             else:
                 dialogue(display, "defaite_boss.txt", "player.txt")
                 pygame.mixer.music.stop()

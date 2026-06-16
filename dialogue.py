@@ -104,6 +104,39 @@ def dialogue(display, text_file, portrait_file):
 
     return
 
+
+def show_text_screen(display, text_file):
+    with open(text_file, "r", encoding="utf-8") as f:
+        text = f.read()
+
+    space_last = True
+    running = True
+
+    while running:
+        if not display.is_open():
+            return
+
+        display.clear()
+        SW, SH = display.screen.get_size()
+
+        keys = pygame.key.get_pressed()
+        space_now = keys[pygame.K_RETURN]
+
+        if keys[pygame.K_ESCAPE]:
+            display.close()
+
+        w, h = ascii_size(display, text)
+        x = SW // 2 - w // 2
+        y = SH // 2 - h // 2
+        display.render_ascii(text, (255, 255, 255), x, y)
+
+        if space_now and not space_last:
+            running = False
+
+        space_last = space_now
+        display.update()
+
+
 master = r"""'
                 ███████████               
           ██   █░░█     █░░█              

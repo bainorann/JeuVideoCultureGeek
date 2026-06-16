@@ -1,13 +1,17 @@
+import sys
+
 import pygame
 
 
 def handle_input(player, floor):
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            return False
+            pygame.quit()
+            sys.exit()
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
-                return False
+                pygame.quit()
+                sys.exit()
             if event.key == pygame.K_RIGHT:
                 player.move(1, 0, floor)
                 # enemy.move_to_player(player, floor)
