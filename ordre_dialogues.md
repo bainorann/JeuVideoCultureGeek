@@ -2,7 +2,26 @@
 
 
 
-Démarrage casino "unfair" -> Fait ! 
+NOUVEAUX :
+
+* Possibilité de retourner au hub avec l'argent gagné (+10/ennemi, +50 mini-boss, +100 boss)
+* Après victoire au casino (suite du mini-boss) : dialogue(display, "postnutclarity.txt", "player.txt")
+* Défaite boss (exfemme) : dialogue(display, "defaite\_boss.txt", "player.txt")
+* Défaite ennemi basique : dialogue(display, "dead.txt", "player.txt")
+* ennemi basique : 10 hp // 10 sh // 5 st
+* EMPLACEMENTS : (01)  - 1 ennemi, (10) - 2 ennemis, (30) - 1 ennemi + "page1.txt", (31) - 1 ennemi, (22) - 1 ennemi, (34) - 2 ennemis,
+
+(60) - 2 ennemis, (50) - "page2.txt", (72) - "page3.txt", (81) - 1 ennemi, (80) - 1 ennemi, (23) - 1 ennemi, (15) - 2 ennemis, (14) - "page4.txt", (45) 1 ennemi, (64) - 3 ennemis,
+
+(95) - 2 ennemis, (84) - "page5.txt"
+
+* dialogue retour au hub : script "comeback.py", fonction : retour(display) -> return True/False
+* Emplacement du mini-boss après l'avoir vaincu : dialogue(display, "alternative.txt", "player.txt")
+* Pour les pages, commande : dialogue(display, "page1.txt", "book.txt")
+
+
+
+Démarrage casino "unfair" -> Fait !
 
 \[casino\_game(display, starting\_money=20, mode="unfair")]
 
@@ -12,7 +31,7 @@ Démarrage casino "unfair" -> Fait !
 
 Hub : casino "balanced", banque, magasin, maison -> Fait !
 
-Ajouter dialogue "maison.txt" devant la maison "A vendre ! Deux chambres, non meublé. Contacter le... (\*C'est, ou plutôt, c'était ma maison. Ce n'est plus chez moi désormais.\*)" 
+Ajouter dialogue "maison.txt" devant la maison "A vendre ! Deux chambres, non meublé. Contacter le... (\*C'est, ou plutôt, c'était ma maison. Ce n'est plus chez moi désormais.\*)"
 
 \[dialogue(display, "maison.txt", "house.txt")]
 
@@ -30,7 +49,7 @@ Ajouter dialogue "bonheur1.txt" à la fin du combat "(\*J'ai réussi ! J'avais o
 
 
 
-\+ flashback = casino "fair" 
+\+ flashback = casino "fair"
 
 \[casino\_game(display, starting\_money=100, mode="fair")]
 
