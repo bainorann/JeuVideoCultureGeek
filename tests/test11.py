@@ -1,6 +1,12 @@
+import math
+import time
+
+import pygame
+
 import tests.layouts as layouts
 import tests.layouts_2 as layouts2
 from bank import bank
+from comeback import retour
 from dialogue import dialogue
 from enemies import Enemy
 from fight import combat
@@ -15,10 +21,17 @@ from tests.helpers import make_display
 def run():
     player = Player(1, 1)
     display = make_display("Second Floor Layout")
-    return run_hub(True, player, display, True)
+    game_state = {
+        "intro": True,
+        "fought_mini": False,
+        "fought_boss": False,
+        "talked": False,
+        "debug": True,
+    }
+    return run_hub(True, player, display, game_state)
 
 
-def run_hub(running, player, display, banned):
+def run_hub(running, player, display, game_state):
 
     floor = Floor()
 
@@ -34,11 +47,11 @@ def run_hub(running, player, display, banned):
             floor.visit_room(x, y)
 
     run_casino(display, running, player, "unfair")
+    game_state["intro"] = True
 
     dialogue(display, "dette_casino.txt", "Arlequin.txt")
 
     while running:
-        # print(player.x(), player.y(), player.localx(), player.localy())
         running = handle_input(player, floor)
         floor.visit_room(player.x(), player.y())
         show_floor(floor, display)
@@ -57,7 +70,7 @@ def run_hub(running, player, display, banned):
             and player.localy() <= 5
             and player.localy() >= 3
         ):
-            run_dungeon(display, running, player)
+            run_dungeon(display, running, player, game_state)
 
         if (
             (player.x(), player.y()) == (1, 1)
@@ -65,7 +78,7 @@ def run_hub(running, player, display, banned):
             and player.localx() <= 7
             and player.localx() >= 6
         ):
-            if banned:
+            if game_state["intro"]:
                 dialogue(display, "comeback.txt", "Arlequin.txt")
                 player.set_position(1, 1, 6, 4)
             else:
@@ -119,11 +132,27 @@ def run_merchant(display, running, player):
         player.set_position(1, 2, 6, 7)
 
 
-def run_dungeon(display, running, player):
+def flashback_animation(display, duration=1.5):
+    screen = display.screen
+    SW, SH = screen.get_size()
+    cx, cy = SW // 2, SH // 2
+    max_r = min(SW, SH) // 2 - 40
+    start = time.time()
+    clock = pygame.time.Clock()
+    while time.time() - start < duration:
+        elapsed = time.time() - start
+        display.clear()
+        for i in range(12):
+            radius = 30 + (elapsed * 200 + i * 40) % max_r
+            angle = elapsed * 3 + i * (math.pi * 2 / 12)
+            r = pygame.Rect(cx - radius, cy - radius, radius * 2, radius * 2)
+            pygame.draw.arc(screen, (255, 255, 255), r, angle, angle + 0.8, 3)
+        display.update()
+        clock.tick(60)
+
+
+def run_dungeon(display, running, player, game_state):
     floor = Floor()
-    fought = False
-    talked = False
-    fought_boss = False
     room_coords = [
         (0, 1),
         (0, 2),
@@ -195,34 +224,72 @@ def run_dungeon(display, running, player):
             player.x(),
             player.y(),
         )
-        if (player.x(), player.y()) == (4, 2) and not talked:
+        if (player.x(), player.y()) == (4, 2) and not game_state["talked"]:
             dialogue(display, "pre_fight.txt", "player.txt")
-            talked = True
-        if (player.x(), player.y()) == (5, 3) and not fought:
+            game_state["talked"] = True
+        if (player.x(), player.y()) == (4, 3) and not game_state["fought_mini"]:
             enemy = Enemy()
-            enemy._hp = 20
-            enemy._sh = 10
+            if game_state["debug"]:
+                enemy._hp = 1
+                enemy._sh = 1
+            else:
+                enemy._hp = 20
+                enemy._sh = 10
             enemy._st = 8
             a = combat(display, player, enemy, player.bag, "Arlequin.txt")
             if a == "win":
-                fought = True
+                game_state["fought_mini"] = True
+                saved_money = player.money()
                 dialogue(display, "bonheur1.txt", "player.txt")
+                player._money = 1000
+                flashback_animation(display)
                 run_casino(display, running, player, "fair")
+                flashback_animation(display)
+                dialogue(display, "postnutclarity.txt", "player.txt")
+                # Le joueur conserve son argent d'avant + 50
+                player.min_money(player.money())
+                player._money = saved_money + 50
+                # Choix : retourner en ville ou rester dans le donjon
+                if retour(display):
+                    player.set_position(4, 1, 13, 4)
+                    display.update()
+                    return
             elif a == "lose":
-                fought = True
+                game_state["fought_mini"] = True
+                game_state["intro"] = False
+                player.min_money(player.money())
+                player._money = 1
                 dialogue(display, "perte.txt", "player.txt")
-                run_hub(running, player, display, False)
-        if (player.x(), player.y()) == (9, 3) and not fought_boss:
+                player.set_position(4, 1, 13, 4)
+                display.update()
+                return
+        if (player.x(), player.y()) == (9, 3) and not game_state["fought_boss"]:
             dialogue(display, "exfemme.txt", "femme.txt")
             enemy = Enemy()
-            enemy._hp = 40
+            if game_state["debug"]:
+                enemy._hp = 1
+            else:
+                enemy._hp = 40
             enemy._sh = 20
             enemy._st = 12
             a = combat(display, player, enemy, player.bag, "femme.txt")
             if a == "win":
-                fought_boss = True
+                game_state["fought_boss"] = True
+                flashback_animation(display)
+                saved_money = player._money
+                player._money = 1000
                 run_casino(display, running, player, "unfair")
+                player._money = saved_money + 100
+                flashback_animation(display)
                 dialogue(display, "redemption1.txt", "player.txt")
+            else:
+                dialogue(display, "defaite_boss.txt", "player.txt")
+                game_state["fought_mini"] = True
+                game_state["intro"] = False
+                player._money = 1
+                player.set_position(4, 1, 13, 4)
+                display.update()
+                return
 
         display.update()
-    display.close()
+    player.set_position(4, 1, 13, 4)
