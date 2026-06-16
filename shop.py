@@ -404,7 +404,7 @@ def shop(display, player):
                     sell_item(player, usable_items[sel])
 
         if keys[pygame.K_ESCAPE]:
-            return
+            display.close()
 
         space_last = space_now
         display.update()

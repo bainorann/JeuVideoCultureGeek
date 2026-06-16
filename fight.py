@@ -644,7 +644,7 @@ def combat(display, player1, enemy1, bag, sprite=None):
             return "quit"
 
         if keys[pygame.K_ESCAPE]:
-            return "quit"
+            display.close()
 
         space_last = space_now
         display.update()

@@ -299,8 +299,8 @@ def casino_game(display, dette=1000000000, starting_money=20, mode="balanced"):
     font_path = "assets/fonts/DejaVuSansMono.ttf"
     Font = pygame.font.Font
     font_big = Font(font_path, fs_big)
-    font_mid  = Font(font_path, fs_mid)
-    font_sm   = Font(font_path, fs_sm)
+    font_mid = Font(font_path, fs_mid)
+    font_sm = Font(font_path, fs_sm)
     font_suit = Font(font_path, fs_suit)
 
     CARD_W = max(90, SW // 11)
@@ -541,7 +541,7 @@ def casino_game(display, dette=1000000000, starting_money=20, mode="balanced"):
                         nonlocal_set_state("deal")
 
                 elif event.key == pygame.K_ESCAPE:
-                    return casino.wallet
+                    display.close()
 
         # ── DESSIN ───────────────────────────────────────────────────
         screen.fill(COLOR_BG)
@@ -554,7 +554,7 @@ def casino_game(display, dette=1000000000, starting_money=20, mode="balanced"):
         )
         if mode == "fair":
             msg = font_big.render(
-                f"Objectif : {max(100 * starting_money, 10000)}", True, COLOR_GRAY
+                f"Objectif : {10 * starting_money}", True, COLOR_GRAY
             )
             screen.blit(msg, (CX - msg.get_width() // 2, 16))
         if mode == "balanced":
@@ -781,9 +781,7 @@ def casino_game(display, dette=1000000000, starting_money=20, mode="balanced"):
 
             # Condition de fin spécifique au mode
             game_over_unfair = mode == "unfair" and casino.wallet <= 0
-            objective_fair = mode == "fair" and casino.wallet > max(
-                50 * starting_money, 10000
-            )
+            objective_fair = mode == "fair" and casino.wallet >= 10 * starting_money
 
             if objective_fair:
                 go = font_big.render("OBJECTIF ATTEINT - BRAVO !", True, COLOR_GREEN)
@@ -824,7 +822,7 @@ def casino_game(display, dette=1000000000, starting_money=20, mode="balanced"):
             if mode == "unfair" and casino.wallet <= 0:
                 pygame.time.delay(1500)
                 return casino.wallet
-            if mode == "fair" and casino.wallet > max(50 * starting_money, 10000):
+            if mode == "fair" and casino.wallet >= 10 * starting_money:
                 pygame.time.delay(1500)
                 return casino.wallet
 

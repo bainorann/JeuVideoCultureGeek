@@ -51,7 +51,7 @@ def retour(display):
         right = keys[pygame.K_RIGHT]
 
         if keys[pygame.K_ESCAPE]:
-            running = False
+            display.close()
 
         if state==0:
             display.render_ascii(yes, (0, 0, 255), (SW-w)//2 - 100, SH//2 + 50)

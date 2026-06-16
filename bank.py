@@ -313,7 +313,7 @@ def bank(display, player):
                     player._money += real_amt
 
         if keys[pygame.K_ESCAPE]:
-            return
+            display.close()
 
         space_last = space_now
         display.update()

@@ -57,7 +57,7 @@ def dialogue(display, text_file, portrait_file):
         space_pressed_now = keys[pygame.K_RETURN]
 
         if keys[pygame.K_ESCAPE]:
-            return
+            display.close()
 
 
         # ── Boîte de dialogue : centrée horizontalement, en bas ──────────
