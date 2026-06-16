@@ -8,6 +8,8 @@ Démarrage casino "unfair" -> Fait !
 
 \[dialogue(display, "dette\_casino.txt", "arlequin.txt")]
 
+**OKAY**
+
 
 
 Hub : casino "balanced", banque, magasin, maison -> Fait !
@@ -18,9 +20,17 @@ Ajouter dialogue "maison.txt" devant la maison "A vendre ! Deux chambres, non me
 
 
 
+**okay**
+
+
+
 Ennemi intermédiaire/mini-boss : 20 hp // 15 sh // 10 st
 
 \[combat(display, player, enemy, bag, "arlequin.txt")]
+
+
+
+**okay, mais display marche pas comme ça**
 
 
 
