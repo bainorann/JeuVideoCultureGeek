@@ -25,35 +25,14 @@ C_BORDER_D = (55, 55, 55)  # bordure bouton désactivé
 # (chez le marchand) et son prix de revente (au joueur).
 
 SHOP_STOCK = [
-    {"name": "Potion Soin (I)", "hp": 5, "sh": 0, "st": 0, "buy": 200, "sell": 100},
-    {"name": "Potion Soin (II)", "hp": 8, "sh": 0, "st": 0, "buy": 500, "sell": 250},
-    {"name": "Potion Soin (III)", "hp": 12, "sh": 0, "st": 0, "buy": 1000, "sell": 500},
-    {"name": "Potion Défensive (I)", "hp": 0, "sh": 3, "st": 0, "buy": 120, "sell": 60},
-    {
-        "name": "Potion Défensive (II)",
-        "hp": 0,
-        "sh": 6,
-        "st": 0,
-        "buy": 225,
-        "sell": 110,
-    },
-    {
-        "name": "Potion Offensive (I)",
-        "hp": 0,
-        "sh": 0,
-        "st": 4,
-        "buy": 200,
-        "sell": 100,
-    },
-    {
-        "name": "Potion Offensive (II)",
-        "hp": 0,
-        "sh": 0,
-        "st": 8,
-        "buy": 500,
-        "sell": 250,
-    },
-    {"name": "Elixir", "hp": 3, "sh": 3, "st": 3, "buy": 700, "sell": 400},
+    {"name": "Potion Soin (I)",   "hp": 5,  "sh": 0, "st": 0, "buy": 200, "sell": 100},
+    {"name": "Potion Soin (II)",   "hp": 8,  "sh": 0, "st": 0, "buy": 500, "sell": 250},
+    {"name": "Potion Soin (III)",   "hp": 12,  "sh": 0, "st": 0, "buy": 1000, "sell": 500},
+    {"name": "Potion Défensive (I)", "hp": 0,  "sh": 3, "st": 0, "buy": 120, "sell": 60},
+    {"name": "Potion Défensive (II)", "hp": 0,  "sh": 6, "st": 0, "buy": 225, "sell": 110},
+    {"name": "Potion Offensive (I)", "hp": 0,  "sh": 0, "st": 4, "buy": 200, "sell": 100},
+    {"name": "Potion Offensive (II)", "hp": 0,  "sh": 0, "st": 8, "buy": 500, "sell": 250},
+    {"name": "Elixir",   "hp": 3, "sh": 3, "st": 3, "buy": 700, "sell": 400},
 ]
 
 
@@ -175,8 +154,8 @@ def shop(display, player):
         SW, SH = screen.get_size()
 
         current_time = time.time()
-        keys = pygame.key.get_pressed()
-        space_now = keys[pygame.K_RETURN]
+        keys         = pygame.key.get_pressed()
+        space_now    = keys[pygame.K_RETURN]
 
         # ── Panneau principal centré ─────────────────────────────────
         panel_w = int(SW * 0.66)

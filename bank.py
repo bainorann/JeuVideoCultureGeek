@@ -109,8 +109,8 @@ def bank(display, player):
         SW, SH = screen.get_size()
 
         current_time = time.time()
-        keys = pygame.key.get_pressed()
-        space_now = keys[pygame.K_RETURN]
+        keys         = pygame.key.get_pressed()
+        space_now    = keys[pygame.K_RETURN]
 
         # ── Fond : art ASCII centré ──────────────────────────────────
         art_x = _cx(screen, "       ______________________________", 8)
