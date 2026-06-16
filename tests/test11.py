@@ -1,23 +1,25 @@
 import tests.layouts as layouts
 import tests.layouts_2 as layouts2
 from bank import bank
+from dialogue import dialogue
+from enemies import Enemy
+from fight import combat
 from input_handler import handle_input
 from lasminas import casino_game
 from map import Floor, Room, show_floor
 from player import Player
 from shop import shop
 from tests.helpers import make_display
-from dialogue import dialogue
-from fight import combat
-from enemies import Enemy
+
 
 def run():
     player = Player(1, 1)
-    return run_hub(True, player)
-
-
-def run_hub(running, player):
     display = make_display("Second Floor Layout")
+    return run_hub(True, player, display, True)
+
+
+def run_hub(running, player, display, banned):
+
     floor = Floor()
 
     for x in range(5):
@@ -32,8 +34,7 @@ def run_hub(running, player):
             floor.visit_room(x, y)
 
     run_casino(display, running, player, "unfair")
-    
-    
+
     dialogue(display, "dette_casino.txt", "Arlequin.txt")
 
     while running:
@@ -64,9 +65,12 @@ def run_hub(running, player):
             and player.localx() <= 7
             and player.localx() >= 6
         ):
-            dialogue(display, "comeback.txt", "Arlequin.txt")
-            player.set_position(1, 1, 6, 4)
-            #run_casino(display, running, player)
+            if banned:
+                dialogue(display, "comeback.txt", "Arlequin.txt")
+                player.set_position(1, 1, 6, 4)
+            else:
+                run_casino(display, running, player, "balanced")
+                player.set_position(1, 1, 6, 4)
 
         if (
             (player.x(), player.y()) == (3, 1)
@@ -84,7 +88,7 @@ def run_hub(running, player):
             and player.localx() >= 4
         ):
             run_merchant(display, running, player)
-        
+
         if (
             (player.x(), player.y()) == (4, 2)
             and player.localy() == 7
@@ -97,12 +101,10 @@ def run_hub(running, player):
 
 def run_casino(display, running, player, mode):
     if running:
-        
         a = casino_game(display, player.debt(), player.money(), mode)
         print(a)
         player.min_debt(a)
         player.min_money(a)
-        player.set_position(1, 1, 6, 4)
 
 
 def run_banque(display, running, player):
@@ -121,6 +123,7 @@ def run_dungeon(display, running, player):
     floor = Floor()
     fought = False
     talked = False
+    fought_boss = False
     room_coords = [
         (0, 1),
         (0, 2),
@@ -192,17 +195,34 @@ def run_dungeon(display, running, player):
             player.x(),
             player.y(),
         )
-        if (player.x(),player.y()) == (4,2) and not talked:
+        if (player.x(), player.y()) == (4, 2) and not talked:
             dialogue(display, "pre_fight.txt", "player.txt")
             talked = True
-        if (player.x(),player.y()) == (5,3) and not fought:
+        if (player.x(), player.y()) == (5, 3) and not fought:
             enemy = Enemy()
             enemy._hp = 20
-            enemy._sh = 15
-            enemy._st = 10
-            combat(display, player, enemy, player.bag, "Arlequin.txt")
-            fought = True
-            dialogue(display, "bonheur1.txt", "player.txt")
+            enemy._sh = 10
+            enemy._st = 8
+            a = combat(display, player, enemy, player.bag, "Arlequin.txt")
+            if a == "win":
+                fought = True
+                dialogue(display, "bonheur1.txt", "player.txt")
+                run_casino(display, running, player, "fair")
+            elif a == "lose":
+                fought = True
+                dialogue(display, "perte.txt", "player.txt")
+                run_hub(running, player, display, False)
+        if (player.x(), player.y()) == (9, 3) and not fought_boss:
+            dialogue(display, "exfemme.txt", "femme.txt")
+            enemy = Enemy()
+            enemy._hp = 40
+            enemy._sh = 20
+            enemy._st = 12
+            a = combat(display, player, enemy, player.bag, "femme.txt")
+            if a == "win":
+                fought_boss = True
+                run_casino(display, running, player, "unfair")
+                dialogue(display, "redemption1.txt", "player.txt")
 
         display.update()
     display.close()

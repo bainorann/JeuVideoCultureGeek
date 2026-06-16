@@ -30,7 +30,7 @@ Ennemi intermédiaire/mini-boss : 20 hp // 15 sh // 10 st
 
 
 
-**okay, mais display marche pas comme ça**
+**okay**
 
 
 

@@ -349,11 +349,6 @@ def combat(display, player1, enemy1, bag, sprite=None):
     enemy_sprite : chaîne ASCII représentant l'ennemi.
     Si omis, on utilise le sprite 'monster' défini dans ce fichier.
     """
-    if enemy_sprite is None:
-        enemy_sprite = monster
-    else : 
-        with open(enemy_sprite, "r", encoding = "utf-8") as f:
-            enemy_sprite = f.read()
 
     state = "main0"
     message = ""
