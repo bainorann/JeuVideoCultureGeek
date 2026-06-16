@@ -79,7 +79,7 @@ class Player:
         return self._money
 
     def min_money(self, num):
-        self._money = self._money - num
+        self._money = num
 
     def set_position(self, room_x, room_y, local_x, local_y):
         self._x = room_x

@@ -7,7 +7,9 @@ from map import Floor, Room, show_floor
 from player import Player
 from shop import shop
 from tests.helpers import make_display
-
+from dialogue import dialogue
+from fight import combat
+from enemies import Enemy
 
 def run():
     player = Player(1, 1)
@@ -28,6 +30,11 @@ def run_hub(running, player):
     for x in range(5):
         for y in range(4):
             floor.visit_room(x, y)
+
+    run_casino(display, running, player, "unfair")
+    
+    
+    dialogue(display, "dette_casino.txt", "Arlequin.txt")
 
     while running:
         # print(player.x(), player.y(), player.localx(), player.localy())
@@ -57,7 +64,9 @@ def run_hub(running, player):
             and player.localx() <= 7
             and player.localx() >= 6
         ):
-            run_casino(display, running, player)
+            dialogue(display, "comeback.txt", "Arlequin.txt")
+            player.set_position(1, 1, 6, 4)
+            #run_casino(display, running, player)
 
         if (
             (player.x(), player.y()) == (3, 1)
@@ -75,11 +84,22 @@ def run_hub(running, player):
             and player.localx() >= 4
         ):
             run_merchant(display, running, player)
+        
+        if (
+            (player.x(), player.y()) == (4, 2)
+            and player.localy() == 7
+            and player.localx() <= 3
+            and player.localx() >= 2
+        ):
+            dialogue(display, "maison.txt", "house.txt")
+            player.set_position(4, 2, 1, 7)
 
 
-def run_casino(display, running, player):
+def run_casino(display, running, player, mode):
     if running:
-        a = casino_game(display, player.debt(), player.money(), "balanced")
+        
+        a = casino_game(display, player.debt(), player.money(), mode)
+        print(a)
         player.min_debt(a)
         player.min_money(a)
         player.set_position(1, 1, 6, 4)
@@ -99,7 +119,8 @@ def run_merchant(display, running, player):
 
 def run_dungeon(display, running, player):
     floor = Floor()
-
+    fought = False
+    talked = False
     room_coords = [
         (0, 1),
         (0, 2),
@@ -171,5 +192,17 @@ def run_dungeon(display, running, player):
             player.x(),
             player.y(),
         )
+        if (player.x(),player.y()) == (4,2) and not talked:
+            dialogue(display, "pre_fight.txt", "player.txt")
+            talked = True
+        if (player.x(),player.y()) == (5,3) and not fought:
+            enemy = Enemy()
+            enemy._hp = 20
+            enemy._sh = 15
+            enemy._st = 10
+            combat(display, player, enemy, player.bag, "Arlequin.txt")
+            fought = True
+            dialogue(display, "bonheur1.txt", "player.txt")
+
         display.update()
     display.close()
