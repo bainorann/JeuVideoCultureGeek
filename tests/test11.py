@@ -13,6 +13,7 @@ from fight import combat
 from input_handler import handle_input
 from lasminas import casino_game
 from map import Floor, Room, show_floor
+from pages import Page
 from player import Player
 from shop import shop
 from tests.helpers import make_display
@@ -212,6 +213,15 @@ def run_dungeon(display, running, player, game_state):
         floor.add_room(x, y, room)
 
         player.set_position(0, 2, 4, 4)  # enemy = enemies.spawn_enemy(0, 0, 2, 1)
+
+    pages = [
+        Page("page1.txt", 3, 0, 4, 4, "book.txt"),
+        Page("page2.txt", 5, 0, 4, 4, "book.txt"),
+        Page("page3.txt", 7, 2, 8, 4, "book.txt"),
+        Page("page4.txt", 1, 4, 8, 4, "book.txt"),
+        Page("page5.txt", 8, 4, 6, 4, "book.txt"),
+    ]
+
     while running:
         running = handle_input(player, floor)
         floor.visit_room(player.x(), player.y())
@@ -224,6 +234,14 @@ def run_dungeon(display, running, player, game_state):
             player.x(),
             player.y(),
         )
+
+        for page in pages:
+            if page.check(player):
+                page.trigger(display)
+
+        for page in pages:
+            page.render(display)
+
         if (player.x(), player.y()) == (4, 2) and not game_state["talked"]:
             dialogue(display, "pre_fight.txt", "player.txt")
             game_state["talked"] = True
