@@ -1,0 +1,16 @@
+[Page 5/5 - Les dark patterns]
+
+Les dark patterns sont des techniques de conception destinées à 
+influencer le comportement des utilisateurs sans qu'ils s'en 
+rendent compte. Par exemple :
+
+- Le défilement infini des réseaux sociaux
+- Les notifications rouges attirant l'attention
+- Les récompenses imprévisibles
+- Les comptes à rebours créant un sentiment d'urgence.
+
+Ces mécanismes exploitent des réflexes psychologiques naturels : 
+curiosité, peur de manquer quelque chose, besoin de validation sociale.
+
+Ils ne créent pas une addiction à eux seuls, mais ils peuvent rendre 
+certaines habitudes beaucoup plus difficiles à interrompre.
