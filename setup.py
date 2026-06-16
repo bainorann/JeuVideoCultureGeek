@@ -1,8 +1,28 @@
+import os
 import sys
 
-from cx_Freeze import Executable, setup
+from setuptools import setup
 
-build_exe_options = {
+txt_files = [f for f in os.listdir(".") if f.endswith(".txt")]
+
+APP = ["game.py"]
+APP_NAME = "CultureGeekGame"
+
+DATA_FILES = [
+    ("", txt_files),
+    ("assets/fonts", ["assets/fonts/DejaVuSansMono.ttf"]),
+    (
+        "assets/music",
+        [
+            "assets/music/prise de drogue.wav",
+            "assets/music/soul à la plage.wav",
+            "assets/music/tks_for_playing_KLICKAUD.mp3",
+        ],
+    ),
+]
+
+OPTIONS = {
+    "argv_emulation": True,
     "packages": ["pygame"],
     "includes": [
         "display",
@@ -17,12 +37,13 @@ build_exe_options = {
         "dialogue",
         "enemies",
         "item",
+        "pages",
+        "comeback",
         "tests",
+        "tests.test11",
+        "tests.helpers",
         "tests.layouts",
         "tests.layouts_2",
-    ],
-    "include_files": [
-        ("assets/fonts/DejaVuSansMono.ttf", "assets/fonts/DejaVuSansMono.ttf"),
     ],
     "excludes": [
         "tkinter",
@@ -59,39 +80,18 @@ build_exe_options = {
         "ossaudiodev",
         "sndhdr",
         "msilib",
-        "distutils",
         "config-3",
         "test",
     ],
-}
-
-bdist_mac_options = {
-    "iconfile": None,
-    "bundle_name": "CultureGeekGame",
-    "custom_info_plist": """\
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0">
-<dict>
-    <key>NSHighResolutionCapable</key>
-    <true/>
-</dict>
-</plist>""",
+    "plist": {
+        "NSHighResolutionCapable": True,
+    },
 }
 
 setup(
-    name="CultureGeekGame",
-    version="1.0",
-    description="Jeu Video Culture Geek",
-    options={
-        "build_exe": build_exe_options,
-        "bdist_mac": bdist_mac_options,
-    },
-    executables=[
-        Executable(
-            "game.py",
-            base=None,
-            target_name="CultureGeekGame",
-        ),
-    ],
+    app=APP,
+    name=APP_NAME,
+    data_files=DATA_FILES,
+    options={"py2app": OPTIONS},
+    setup_requires=["py2app"],
 )
