@@ -115,6 +115,7 @@ def run_hub(running, player, display, game_state):
 
 def run_casino(display, running, player, mode):
     if running:
+        pygame.mixer.music.stop()
         a = casino_game(display, player.debt(), player.money(), mode)
         print(a)
         player.min_debt(a)
@@ -222,6 +223,9 @@ def run_dungeon(display, running, player, game_state):
         Page("page5.txt", 8, 4, 6, 4, "book.txt"),
     ]
 
+    pygame.mixer.music.load("assets/music/prise de drogue.wav")
+    pygame.mixer.music.play(-1)
+
     while running:
         running = handle_input(player, floor)
         floor.visit_room(player.x(), player.y())
@@ -243,6 +247,9 @@ def run_dungeon(display, running, player, game_state):
             page.render(display)
 
         if (player.x(), player.y()) == (4, 2) and not game_state["talked"]:
+            pygame.mixer.music.stop()
+            pygame.mixer.music.load("assets/music/tks_for_playing_KLICKAUD.mp3")
+            pygame.mixer.music.play(-1)
             dialogue(display, "pre_fight.txt", "player.txt")
             game_state["talked"] = True
         if (player.x(), player.y()) == (4, 3) and not game_state["fought_mini"]:
@@ -269,10 +276,14 @@ def run_dungeon(display, running, player, game_state):
                 player._money = saved_money + 50
                 # Choix : retourner en ville ou rester dans le donjon
                 if retour(display):
+                    pygame.mixer.music.stop()
                     player.set_position(4, 1, 13, 4)
                     display.update()
                     return
+                pygame.mixer.music.load("assets/music/prise de drogue.wav")
+                pygame.mixer.music.play(-1)
             elif a == "lose":
+                pygame.mixer.music.stop()
                 game_state["fought_mini"] = True
                 game_state["intro"] = False
                 player.min_money(player.money())
@@ -282,6 +293,9 @@ def run_dungeon(display, running, player, game_state):
                 display.update()
                 return
         if (player.x(), player.y()) == (9, 3) and not game_state["fought_boss"]:
+            pygame.mixer.music.stop()
+            pygame.mixer.music.load("assets/music/tks_for_playing_KLICKAUD.mp3")
+            pygame.mixer.music.play(-1)
             dialogue(display, "exfemme.txt", "femme.txt")
             enemy = Enemy()
             if game_state["debug"]:
@@ -300,8 +314,11 @@ def run_dungeon(display, running, player, game_state):
                 player._money = saved_money + 100
                 flashback_animation(display)
                 dialogue(display, "redemption1.txt", "player.txt")
+                pygame.mixer.music.load("assets/music/prise de drogue.wav")
+                pygame.mixer.music.play(-1)
             else:
                 dialogue(display, "defaite_boss.txt", "player.txt")
+                pygame.mixer.music.stop()
                 game_state["fought_mini"] = True
                 game_state["intro"] = False
                 player._money = 1
@@ -310,4 +327,5 @@ def run_dungeon(display, running, player, game_state):
                 return
 
         display.update()
+    pygame.mixer.music.stop()
     player.set_position(4, 1, 13, 4)

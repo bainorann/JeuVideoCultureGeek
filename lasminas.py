@@ -289,6 +289,9 @@ def casino_game(display, dette=1000000000, starting_money=20, mode="balanced"):
     screen = display.screen
     clock = display.clock
 
+    pygame.mixer.music.load("assets/music/soul à la plage.wav")
+    pygame.mixer.music.play(-1)
+
     SW, SH = screen.get_size()
 
     fs_big = max(22, SH // 30)
@@ -467,6 +470,7 @@ def casino_game(display, dette=1000000000, starting_money=20, mode="balanced"):
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
+                pygame.mixer.music.stop()
                 return casino.wallet
 
             # ── Souris ──────────────────────────────────────────────
@@ -474,6 +478,7 @@ def casino_game(display, dette=1000000000, starting_money=20, mode="balanced"):
                 mx, my = event.pos
 
                 if has_quit and btn_quit.collidepoint(mx, my):
+                    pygame.mixer.music.stop()
                     return casino.wallet
 
                 if state == "deal":
@@ -528,6 +533,7 @@ def casino_game(display, dette=1000000000, starting_money=20, mode="balanced"):
                 elif event.key in (pygame.K_RETURN, pygame.K_SPACE):
                     result = confirm_focused()
                     if result == "quit":
+                        pygame.mixer.music.stop()
                         return casino.wallet
 
                 elif event.key == pygame.K_BACKSPACE:
@@ -821,9 +827,11 @@ def casino_game(display, dette=1000000000, starting_money=20, mode="balanced"):
         if state == "result" and result_done:
             if mode == "unfair" and casino.wallet <= 0:
                 pygame.time.delay(1500)
+                pygame.mixer.music.stop()
                 return casino.wallet
             if mode == "fair" and casino.wallet >= 10 * starting_money:
                 pygame.time.delay(1500)
+                pygame.mixer.music.stop()
                 return casino.wallet
 
 

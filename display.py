@@ -8,6 +8,7 @@ from screen import choose_font
 class Display:
     def __init__(self, width=800, height=600, title="ASCII Game"):
         pygame.init()
+        pygame.mixer.init()
         info = pygame.display.Info()
         # screen_width = info.current_w
         # screen_height = info.current_h
