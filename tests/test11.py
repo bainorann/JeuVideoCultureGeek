@@ -77,6 +77,7 @@ def run_hub(running, player, display, game_state):
             and player.localy() <= 5
             and player.localy() >= 3
         ):
+            game_state["intro"] = False
             run_dungeon(display, running, player, game_state)
 
         if (
@@ -267,6 +268,7 @@ def run_dungeon(display, running, player, game_state):
                 enemy._hp = 20
                 enemy._sh = 10
             enemy._st = 8
+            save_stats = (player._hp, player._sh, player._st)
             a = combat(display, player, enemy, player.bag, "Arlequin.txt")
             if a == "win":
                 game_state["fought_mini"] = True
@@ -289,6 +291,9 @@ def run_dungeon(display, running, player, game_state):
                 pygame.mixer.music.load("assets/music/prise de drogue.wav")
                 pygame.mixer.music.play(-1)
             elif a == "lose":
+                player._hp = save_stats[0]
+                player._sh = save_stats[1]
+                player._st = save_stats[2]
                 pygame.mixer.music.stop()
                 game_state["fought_mini"] = True
                 game_state["intro"] = False

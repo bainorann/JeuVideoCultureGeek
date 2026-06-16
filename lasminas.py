@@ -559,9 +559,7 @@ def casino_game(display, dette=1000000000, starting_money=20, mode="balanced"):
             screen, font_mid, f"Mise : {casino.bet}", 20, 16 + fs_mid + 4, COLOR_WHITE
         )
         if mode == "fair":
-            msg = font_big.render(
-                f"Objectif : {10 * starting_money}", True, COLOR_GRAY
-            )
+            msg = font_big.render(f"Objectif : {10 * starting_money}", True, COLOR_GRAY)
             screen.blit(msg, (CX - msg.get_width() // 2, 16))
         if mode == "balanced":
             msg = font_big.render(f"Dette : {dette}", True, COLOR_GRAY)
@@ -695,7 +693,7 @@ def casino_game(display, dette=1000000000, starting_money=20, mode="balanced"):
             )
 
             hint = font_sm.render(
-                "<- -> pour naviguer  |  ESPACE pour selectionner  |  ECHAP pour re-miser",
+                "<- -> pour naviguer  |  ENTREE pour selectionner",
                 True,
                 COLOR_GRAY,
             )

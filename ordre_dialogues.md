@@ -5,8 +5,11 @@
 NOUVEAUX :
 
 * Possibilité de retourner au hub avec l'argent gagné (+10/ennemi, +50 mini-boss, +100 boss)
+* **okay**
 * Après victoire au casino (suite du mini-boss) : dialogue(display, "postnutclarity.txt", "player.txt")
+* **okey**
 * Défaite boss (exfemme) : dialogue(display, "defaite\_boss.txt", "player.txt")
+* **okay**
 * Défaite ennemi basique : dialogue(display, "dead.txt", "player.txt")
 * ennemi basique : 10 hp // 10 sh // 5 st
 * EMPLACEMENTS : (01)  - 1 ennemi, (10) - 2 ennemis, (30) - 1 ennemi + "page1.txt", (31) - 1 ennemi, (22) - 1 ennemi, (34) - 2 ennemis,
